@@ -1,0 +1,192 @@
+<!--
+Copyright 2020 Adam Gotlib (WUT Driverless)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<launch>
+  <arg name="dds_domain" default="31" />
+  <arg name="dds_done_topic" default="dds_done" />
+  <arg name="dds_done_reply_topic" default="dds_done_reply" />
+
+  <!-- Incoming topics of type RoadLinesPolynoms -->
+
+  <node exec="recv_road_lines_polynoms" pkg="vrxperience_bridge">
+    <param name="ros_topic" value="road_lines_polynoms_camera_front" />
+    <param name="dds_topic" value="cameraRoadLinesPolynoms_F" />
+    <param name="dds_domain" value="$(var dds_domain)" />
+    <param name="sensor_frame" value="camera_front" />
+  </node>
+
+  <node exec="recv_road_lines_polynoms" pkg="vrxperience_bridge">
+    <param name="ros_topic" value="road_lines_polynoms_camera_front_left" />
+    <param name="dds_topic" value="cameraRoadLinesPolynoms_FL" />
+    <param name="dds_domain" value="$(var dds_domain)" />
+    <param name="sensor_frame" value="camera_front_left" />
+  </node>
+
+  <node exec="recv_road_lines_polynoms" pkg="vrxperience_bridge">
+    <param name="ros_topic" value="road_lines_polynoms_camera_front_right" />
+    <param name="dds_topic" value="cameraRoadLinesPolynoms_FR" />
+    <param name="dds_domain" value="$(var dds_domain)" />
+    <param name="sensor_frame" value="camera_front_right" />
+  </node>
+
+  <node exec="recv_road_lines_polynoms" pkg="vrxperience_bridge">
+    <param name="ros_topic" value="road_lines_polynoms_camera_rear_left" />
+    <param name="dds_topic" value="cameraRoadLinesPolynoms_RL" />
+    <param name="dds_domain" value="$(var dds_domain)" />
+    <param name="sensor_frame" value="camera_rear_left" />
+  </node>
+
+  <node exec="recv_road_lines_polynoms" pkg="vrxperience_bridge">
+    <param name="ros_topic" value="road_lines_polynoms_camera_rear_right" />
+    <param name="dds_topic" value="cameraRoadLinesPolynoms_RR" />
+    <param name="dds_domain" value="$(var dds_domain)" />
+    <param name="sensor_frame" value="camera_rear_right" />
+  </node>
+
+  <!-- Incoming topics of type MovableTargetsBoundingBoxes -->
+
+  <node exec="recv_movable_targets_bounding_boxes" pkg="vrxperience_bridge">
+    <param name="ros_topic" value="movable_targets_bounding_boxes_camera_front" />
+    <param name="dds_topic" value="cameraSensorMovableTargetsBoundingBoxes_F" />
+    <param name="dds_domain" value="$(var dds_domain)" />
+    <param name="sensor_frame" value="camera_front" />
+  </node>
+
+  <node exec="recv_movable_targets_bounding_boxes" pkg="vrxperience_bridge">
+    <param name="ros_topic" value="movable_targets_bounding_boxes_camera_front_left" />
+    <param name="dds_topic" value="cameraSensorMovableTargetsBoundingBoxes_FL" />
+    <param name="dds_domain" value="$(var dds_domain)" />
+    <param name="sensor_frame" value="camera_front_left" />
+  </node>
+
+  <node exec="recv_movable_targets_bounding_boxes" pkg="vrxperience_bridge">
+    <param name="ros_topic" value="movable_targets_bounding_boxes_camera_front_right" />
+    <param name="dds_topic" value="cameraSensorMovableTargetsBoundingBoxes_FR" />
+    <param name="dds_domain" value="$(var dds_domain)" />
+    <param name="sensor_frame" value="camera_front_right" />
+  </node>
+
+  <node exec="recv_movable_targets_bounding_boxes" pkg="vrxperience_bridge">
+    <param name="ros_topic" value="movable_targets_bounding_boxes_camera_rear_left" />
+    <param name="dds_topic" value="cameraSensorMovableTargetsBoundingBoxes_RL" />
+    <param name="dds_domain" value="$(var dds_domain)" />
+    <param name="sensor_frame" value="camera_rear_left" />
+  </node>
+
+  <node exec="recv_movable_targets_bounding_boxes" pkg="vrxperience_bridge">
+    <param name="ros_topic" value="movable_targets_bounding_boxes_camera_rear_right" />
+    <param name="dds_topic" value="cameraSensorMovableTargetsBoundingBoxes_RR" />
+    <param name="dds_domain" value="$(var dds_domain)" />
+    <param name="sensor_frame" value="camera_rear_right" />
+  </node>
+
+  <!-- Incoming topics of type GPS -->
+
+  <node exec="recv_gps" pkg="vrxperience_bridge">
+    <param name="ros_topic" value="gps" />
+    <param name="dds_topic" value="gpsGPS" />
+    <param name="dds_domain" value="$(var dds_domain)" />
+    <param name="sensor_frame" value="gps" />
+  </node>
+
+  <!-- Incoming topics of type LaserMeter -->
+
+  <node exec="recv_laser_meter" pkg="vrxperience_bridge">
+    <param name="ros_topic" value="laser_meter_flash" />
+    <param name="dds_topic" value="lidarLaserMeter_Flash" />
+    <param name="dds_domain" value="$(var dds_domain)" />
+    <param name="sensor_frame" value="laser_meter_flash" />
+  </node>
+
+  <node exec="recv_laser_meter" pkg="vrxperience_bridge">
+    <param name="ros_topic" value="laser_meter_rotating" />
+    <param name="dds_topic" value="lidarLaserMeter_Rotating" />
+    <param name="dds_domain" value="$(var dds_domain)" />
+    <param name="sensor_frame" value="laser_meter_rotating" />
+  </node>
+
+  <!-- Incoming topics of type MovableTargets -->
+
+  <node exec="recv_movable_targets" pkg="vrxperience_bridge">
+    <param name="ros_topic" value="movable_targets_radar_front" />
+    <param name="dds_topic" value="radarSensorMovableTargets_F" />
+    <param name="dds_domain" value="$(var dds_domain)" />
+    <param name="sensor_frame" value="radar_front" />
+  </node>
+
+  <node exec="recv_movable_targets" pkg="vrxperience_bridge">
+    <param name="ros_topic" value="movable_targets_radar_port" />
+    <param name="dds_topic" value="radarSensorMovableTargets_Port" />
+    <param name="dds_domain" value="$(var dds_domain)" />
+    <param name="sensor_frame" value="radar_port" />
+  </node>
+
+  <node exec="recv_movable_targets" pkg="vrxperience_bridge">
+    <param name="ros_topic" value="movable_targets_radar_starboard" />
+    <param name="dds_topic" value="radarSensorMovableTargets_Stbd" />
+    <param name="dds_domain" value="$(var dds_domain)" />
+    <param name="sensor_frame" value="radar_starboard" />
+  </node>
+
+  <node exec="recv_movable_targets" pkg="vrxperience_bridge">
+    <param name="ros_topic" value="movable_targets_radar_rear" />
+    <param name="dds_topic" value="radarSensorMovableTargets_R" />
+    <param name="dds_domain" value="$(var dds_domain)" />
+    <param name="sensor_frame" value="radar_rear" />
+  </node>
+
+  <!-- Incoming topics of type VehicleOutput -->
+
+  <node exec="recv_vehicle_output" pkg="vrxperience_bridge">
+    <param name="ros_topic" value="vehicle_output" />
+    <param name="dds_topic" value="vehicleStateVehicleOutput" />
+    <param name="dds_domain" value="$(var dds_domain)" />
+  </node>
+
+  <!-- Outgoing topics of type CabToModelCorrective -->
+
+  <node exec="send_cab_to_model_corrective" pkg="vrxperience_bridge">
+    <param name="ros_topic" value="cab_to_model_corrective" />
+    <param name="dds_topic" value="toVehicleCabToModelCorrective" />
+    <param name="dds_domain" value="$(var dds_domain)" />
+  </node>
+
+  <!-- Outgoing topics of type CabToSteeringCorrective -->
+
+  <node exec="send_cab_to_steering_corrective" pkg="vrxperience_bridge">
+    <param name="ros_topic" value="cab_to_steering_corrective" />
+    <param name="dds_topic" value="toVehicleSteeringCorrective" />
+    <param name="dds_domain" value="$(var dds_domain)" />
+  </node>
+
+
+  <!-- Incoming dds_done topic of type Octets -->
+
+  <node exec="recv_dds_done" pkg="vrxperience_bridge">
+    <param name="ros_topic" value="$(var dds_done_topic)" />
+    <param name="dds_topic" value="$(var dds_done_topic)" />
+    <param name="dds_domain" value="$(var dds_domain)" />
+  </node>
+
+  <!-- Outgoing dds_done_reply topic of type Octets -->
+
+  <node exec="send_dds_done_reply" pkg="vrxperience_bridge">
+    <param name="ros_topic" value="$(var dds_done_reply_topic)" />
+    <param name="dds_topic" value="$(var dds_done_reply_topic)" />
+    <param name="dds_domain" value="$(var dds_domain)" />
+  </node>
+
+</launch>
