@@ -14,34 +14,36 @@
 
 #include "vrxperience_bridge/sim_data_receiver.hpp"
 #include "vrxperience_msgs/msg/laser_meter.hpp"
-#include "RtiSCADE_DS_Controller.hpp"
+#include "IndyDS.h"
 
 using vrxperience_bridge::SimDataReceiver;
+typedef SimDataReceiver<IndyDS_LaserMeter, vrxperience_msgs::msg::LaserMeter> LaserMeterReceiver;
 
 std::string sensor_frame;
 
-void convert(IndyDS::LaserMeter IN simMsg, vrxperience_msgs::msg::LaserMeter OUT rosMsg)
+void convert(IndyDS_LaserMeter IN simMsg, vrxperience_msgs::msg::LaserMeter OUT rosMsg)
 {
-  rosMsg.header.stamp.sec = (int) simMsg.lastUpdate();
-  rosMsg.header.stamp.nanosec = ((int) (simMsg.lastUpdate() * 1e9)) % ((int) 1e9);
+  rosMsg.header.stamp.sec = (int) simMsg.lastUpdate;
+  rosMsg.header.stamp.nanosec = ((int) (simMsg.lastUpdate * 1e9)) % ((int) 1e9);
   rosMsg.header.frame_id = sensor_frame;
 
-  rosMsg.global_id = simMsg.globalId();
-  rosMsg.ego_vehicle_id = simMsg.vhlId();
-  rosMsg.sensor_id = simMsg.sensorId();
-  rosMsg.nearest_point = simMsg.nearestPoint();
+  rosMsg.global_id = simMsg.globalId;
+  rosMsg.ego_vehicle_id = simMsg.vhlId;
+  rosMsg.sensor_id = simMsg.sensorId;
+  rosMsg.nearest_point = simMsg.nearestPoint;
 
-  for (auto simLaserMeterPointMsg : simMsg.resultArray())
+  for (int i = 0; i < simMsg.resultArray._length; i++)
   {
+    auto simLaserMeterPointMsg = simMsg.resultArray._buffer[i];
     vrxperience_msgs::msg::LaserMeterPoint rosLaserMeterPointMsg;
 
-    rosLaserMeterPointMsg.hit = simLaserMeterPointMsg.hit();
-    rosLaserMeterPointMsg.h_angle = simLaserMeterPointMsg.Hangle();
-    rosLaserMeterPointMsg.v_angle = simLaserMeterPointMsg.Vangle();
-    rosLaserMeterPointMsg.intersection_point.x = simLaserMeterPointMsg.relposx();
-    rosLaserMeterPointMsg.intersection_point.y = simLaserMeterPointMsg.relposy();
-    rosLaserMeterPointMsg.intersection_point.z = simLaserMeterPointMsg.relposz();
-    rosLaserMeterPointMsg.distance = simLaserMeterPointMsg.distance();
+    rosLaserMeterPointMsg.hit = simLaserMeterPointMsg.hit;
+    rosLaserMeterPointMsg.h_angle = simLaserMeterPointMsg.Hangle;
+    rosLaserMeterPointMsg.v_angle = simLaserMeterPointMsg.Vangle;
+    rosLaserMeterPointMsg.intersection_point.x = simLaserMeterPointMsg.relposx;
+    rosLaserMeterPointMsg.intersection_point.y = simLaserMeterPointMsg.relposy;
+    rosLaserMeterPointMsg.intersection_point.z = simLaserMeterPointMsg.relposz;
+    rosLaserMeterPointMsg.distance = simLaserMeterPointMsg.distance;
 
     rosMsg.results.push_back(rosLaserMeterPointMsg);
   }
@@ -50,7 +52,7 @@ void convert(IndyDS::LaserMeter IN simMsg, vrxperience_msgs::msg::LaserMeter OUT
 int main(int argc, char *argv[])
 {
   rclcpp::init(argc, argv);
-  SimDataReceiver<IndyDS::LaserMeter, vrxperience_msgs::msg::LaserMeter> receiver("recv_movable_targets", &convert);
+  LaserMeterReceiver receiver("recv_movable_targets", IndyDS_LaserMeter_desc, &convert);
   sensor_frame  = receiver.declare_parameter("sensor_frame", "");
   receiver.run();
 }

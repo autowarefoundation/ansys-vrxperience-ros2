@@ -12,21 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <dds/core/BuiltinTopicTypes.hpp>
 #include "vrxperience_bridge/sim_data_sender.hpp"
 #include "std_msgs/msg/byte_multi_array.hpp"
+#include "DDS_Octets.h"
 
 using vrxperience_bridge::SimDataSender;
-typedef SimDataSender<std_msgs::msg::ByteMultiArray, dds::core::BytesTopicType> DDSDoneReplySender;
+typedef SimDataSender<std_msgs::msg::ByteMultiArray, DDS_Octets> DDSDoneReplySender;
 
-void convert(std_msgs::msg::ByteMultiArray IN rosMsg, dds::core::BytesTopicType OUT simMsg)
+void convert(std_msgs::msg::ByteMultiArray IN rosMsg, DDS_Octets OUT simMsg)
 {
-  simMsg.data(rosMsg.data);
+  // TODO Copy data before sending out the message
+  simMsg.value._length = 0;
+  simMsg.value._buffer = nullptr;
+  simMsg.value._release = true;
+  simMsg.value._maximum = 0;
 }
 
 int main(int argc, char *argv[])
 {
   rclcpp::init(argc, argv);
-  auto sender = std::make_shared<DDSDoneReplySender>("send_dds_done_reply", &convert);
+  auto sender = std::make_shared<DDSDoneReplySender>("send_dds_done_reply",
+                                                     DDS_Octets_desc,
+                                                     &convert);
+
   rclcpp::spin(sender);
 }

@@ -14,9 +14,10 @@
 
 #include "vrxperience_bridge/sim_data_receiver.hpp"
 #include "vrxperience_msgs/msg/road_lines_polynoms.hpp"
-#include "RtiSCADE_DS_Controller.hpp"
+#include "IndyDS.h"
 
 using vrxperience_bridge::SimDataReceiver;
+typedef SimDataReceiver<IndyDS_RoadLinesPolynoms, vrxperience_msgs::msg::RoadLinesPolynoms> RoadLinesPolynomsReceiver;
 
 const int WORLD_FRAME = 0;
 const int VEHICLE_FRAME = 1;
@@ -26,12 +27,12 @@ std::string world_frame;
 std::string vehicle_frame;
 std::string sensor_frame;
 
-void convert(IndyDS::RoadLinesPolynoms IN simMsg, vrxperience_msgs::msg::RoadLinesPolynoms OUT rosMsg)
+void convert(IndyDS_RoadLinesPolynoms IN simMsg, vrxperience_msgs::msg::RoadLinesPolynoms OUT rosMsg)
 {
-  rosMsg.header.stamp.sec = (int) simMsg.timeOfUpdate();
-  rosMsg.header.stamp.nanosec = ((int) (simMsg.timeOfUpdate() * 1e9)) % ((int) 1e9);
+  rosMsg.header.stamp.sec = (int) simMsg.timeOfUpdate;
+  rosMsg.header.stamp.nanosec = ((int) (simMsg.timeOfUpdate * 1e9)) % ((int) 1e9);
 
-  switch(simMsg.referenceFrame())
+  switch(simMsg.referenceFrame)
   {
   case WORLD_FRAME:
     rosMsg.header.frame_id = world_frame;
@@ -44,23 +45,24 @@ void convert(IndyDS::RoadLinesPolynoms IN simMsg, vrxperience_msgs::msg::RoadLin
     break;
   }
 
-  rosMsg.global_id = simMsg.globalId();
-  rosMsg.ego_vehicle_id = simMsg.egoVhlId();
-  rosMsg.is_noisy = simMsg.isNoisy();
+  rosMsg.global_id = simMsg.globalId;
+  rosMsg.ego_vehicle_id = simMsg.egoVhlId;
+  rosMsg.is_noisy = simMsg.isNoisy;
 
-  for (auto simPolynomMsg : simMsg.roadLinesPolynomsArray())
+  for (int i = 0; i < simMsg.roadLinesPolynomsArray._length; i++)
   {
+    auto simPolynomMsg = simMsg.roadLinesPolynomsArray._buffer[i];
     vrxperience_msgs::msg::RoadLinePolynom rosPolynomMsg;
 
-    rosPolynomMsg.line_id = simPolynomMsg.lineId();
+    rosPolynomMsg.line_id = simPolynomMsg.lineId;
 
-    rosPolynomMsg.c0 = simPolynomMsg.c0();
-    rosPolynomMsg.c1 = simPolynomMsg.c1();
-    rosPolynomMsg.c2 = simPolynomMsg.c2();
-    rosPolynomMsg.c3 = simPolynomMsg.c3();
+    rosPolynomMsg.c0 = simPolynomMsg.c0;
+    rosPolynomMsg.c1 = simPolynomMsg.c1;
+    rosPolynomMsg.c2 = simPolynomMsg.c2;
+    rosPolynomMsg.c3 = simPolynomMsg.c3;
 
-    rosPolynomMsg.curvature_radius = simPolynomMsg.curvatureRadius();
-    rosPolynomMsg.estimated_curvature_radius = simPolynomMsg.estimatedCurvatureRadius();
+    rosPolynomMsg.curvature_radius = simPolynomMsg.curvatureRadius;
+    rosPolynomMsg.estimated_curvature_radius = simPolynomMsg.estimatedCurvatureRadius;
 
     rosMsg.polynoms.push_back(rosPolynomMsg);
   }
@@ -69,7 +71,7 @@ void convert(IndyDS::RoadLinesPolynoms IN simMsg, vrxperience_msgs::msg::RoadLin
 int main(int argc, char *argv[])
 {
   rclcpp::init(argc, argv);
-  SimDataReceiver<IndyDS::RoadLinesPolynoms, vrxperience_msgs::msg::RoadLinesPolynoms> receiver("recv_road_lines_polynoms", &convert);
+  RoadLinesPolynomsReceiver receiver("recv_road_lines_polynoms", IndyDS_RoadLinesPolynoms_desc, &convert);
   world_frame   = receiver.declare_parameter("world_frame", "world");
   vehicle_frame = receiver.declare_parameter("vehicle_frame", "base_link");
   sensor_frame  = receiver.declare_parameter("sensor_frame", "");

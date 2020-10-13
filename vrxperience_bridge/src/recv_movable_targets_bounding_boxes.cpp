@@ -14,9 +14,10 @@
 
 #include "vrxperience_bridge/sim_data_receiver.hpp"
 #include "vrxperience_msgs/msg/movable_targets_bounding_boxes.hpp"
-#include "RtiSCADE_DS_Controller.hpp"
+#include "IndyDS.h"
 
 using vrxperience_bridge::SimDataReceiver;
+typedef SimDataReceiver<IndyDS_SensorMovableTargetsBoundingBoxes, vrxperience_msgs::msg::MovableTargetsBoundingBoxes> MovableTargetsBoundingBoxesReceiver;
 
 const int WORLD_FRAME = 0;
 const int VEHICLE_FRAME = 1;
@@ -26,23 +27,24 @@ std::string world_frame;
 std::string vehicle_frame;
 std::string sensor_frame;
 
-void convert(IndyDS::SensorMovableTargetsBoundingBoxes IN simMsg, vrxperience_msgs::msg::MovableTargetsBoundingBoxes OUT rosMsg)
+void convert(IndyDS_SensorMovableTargetsBoundingBoxes IN simMsg, vrxperience_msgs::msg::MovableTargetsBoundingBoxes OUT rosMsg)
 {
-  rosMsg.header.stamp.sec = (int) simMsg.timeOfUpdate();
-  rosMsg.header.stamp.nanosec = ((int) (simMsg.timeOfUpdate() * 1e9)) % ((int) 1e9);
+  rosMsg.header.stamp.sec = (int) simMsg.timeOfUpdate;
+  rosMsg.header.stamp.nanosec = ((int) (simMsg.timeOfUpdate * 1e9)) % ((int) 1e9);
   rosMsg.header.frame_id = sensor_frame;
 
-  rosMsg.global_id = simMsg.globalId();
-  rosMsg.ego_vehicle_id = simMsg.vhlId();
+  rosMsg.global_id = simMsg.globalId;
+  rosMsg.ego_vehicle_id = simMsg.vhlId;
 
-  for (auto simBoundingBoxMsg : simMsg.boundingBoxesArray())
+  for (int i = 0; i < simMsg.boundingBoxesArray._length; i++)
   {
+    auto simBoundingBoxMsg = simMsg.boundingBoxesArray._buffer[i];
     vrxperience_msgs::msg::MovableTargetBoundingBox rosBoundingBoxMsg;
 
-    rosBoundingBoxMsg.header.stamp.sec = (int) simMsg.timeOfUpdate();
-    rosBoundingBoxMsg.header.stamp.nanosec = ((int) (simMsg.timeOfUpdate() * 1e9)) % ((int) 1e9);
+    rosBoundingBoxMsg.header.stamp.sec = (int) simMsg.timeOfUpdate;
+    rosBoundingBoxMsg.header.stamp.nanosec = ((int) (simMsg.timeOfUpdate * 1e9)) % ((int) 1e9);
 
-    switch(simBoundingBoxMsg.referenceFrame())
+    switch(simBoundingBoxMsg.referenceFrame)
     {
     case WORLD_FRAME:
       rosBoundingBoxMsg.header.frame_id = world_frame;
@@ -55,39 +57,39 @@ void convert(IndyDS::SensorMovableTargetsBoundingBoxes IN simMsg, vrxperience_ms
       break;
     }
 
-    rosBoundingBoxMsg.id = simBoundingBoxMsg.id();
+    rosBoundingBoxMsg.id = simBoundingBoxMsg.id;
 
-    rosBoundingBoxMsg.rear_bottom_right.x  = simBoundingBoxMsg.rearBottomRightX();
-    rosBoundingBoxMsg.rear_bottom_right.y  = simBoundingBoxMsg.rearBottomRightY();
-    rosBoundingBoxMsg.rear_bottom_right.z  = simBoundingBoxMsg.rearBottomRightZ();
+    rosBoundingBoxMsg.rear_bottom_right.x  = simBoundingBoxMsg.rearBottomRightX;
+    rosBoundingBoxMsg.rear_bottom_right.y  = simBoundingBoxMsg.rearBottomRightY;
+    rosBoundingBoxMsg.rear_bottom_right.z  = simBoundingBoxMsg.rearBottomRightZ;
 
-    rosBoundingBoxMsg.rear_top_right.x     = simBoundingBoxMsg.rearTopRightX();
-    rosBoundingBoxMsg.rear_top_right.y     = simBoundingBoxMsg.rearTopRightY();
-    rosBoundingBoxMsg.rear_top_right.z     = simBoundingBoxMsg.rearTopRightZ();
+    rosBoundingBoxMsg.rear_top_right.x     = simBoundingBoxMsg.rearTopRightX;
+    rosBoundingBoxMsg.rear_top_right.y     = simBoundingBoxMsg.rearTopRightY;
+    rosBoundingBoxMsg.rear_top_right.z     = simBoundingBoxMsg.rearTopRightZ;
 
-    rosBoundingBoxMsg.rear_bottom_left.x   = simBoundingBoxMsg.rearbottomLeftX();
-    rosBoundingBoxMsg.rear_bottom_left.y   = simBoundingBoxMsg.rearbottomLeftY();
-    rosBoundingBoxMsg.rear_bottom_left.z   = simBoundingBoxMsg.rearbottomLeftZ();
+    rosBoundingBoxMsg.rear_bottom_left.x   = simBoundingBoxMsg.rearbottomLeftX;
+    rosBoundingBoxMsg.rear_bottom_left.y   = simBoundingBoxMsg.rearbottomLeftY;
+    rosBoundingBoxMsg.rear_bottom_left.z   = simBoundingBoxMsg.rearbottomLeftZ;
 
-    rosBoundingBoxMsg.rear_top_left.x      = simBoundingBoxMsg.rearTopLeftX();
-    rosBoundingBoxMsg.rear_top_left.y      = simBoundingBoxMsg.rearTopLeftY();
-    rosBoundingBoxMsg.rear_top_left.z      = simBoundingBoxMsg.rearTopLeftZ();
+    rosBoundingBoxMsg.rear_top_left.x      = simBoundingBoxMsg.rearTopLeftX;
+    rosBoundingBoxMsg.rear_top_left.y      = simBoundingBoxMsg.rearTopLeftY;
+    rosBoundingBoxMsg.rear_top_left.z      = simBoundingBoxMsg.rearTopLeftZ;
 
-    rosBoundingBoxMsg.front_bottom_right.x = simBoundingBoxMsg.frontBottomRightX();
-    rosBoundingBoxMsg.front_bottom_right.y = simBoundingBoxMsg.frontBottomRightY();
-    rosBoundingBoxMsg.front_bottom_right.z = simBoundingBoxMsg.frontBottomRightZ();
+    rosBoundingBoxMsg.front_bottom_right.x = simBoundingBoxMsg.frontBottomRightX;
+    rosBoundingBoxMsg.front_bottom_right.y = simBoundingBoxMsg.frontBottomRightY;
+    rosBoundingBoxMsg.front_bottom_right.z = simBoundingBoxMsg.frontBottomRightZ;
 
-    rosBoundingBoxMsg.front_top_right.x    = simBoundingBoxMsg.frontTopRightX();
-    rosBoundingBoxMsg.front_top_right.y    = simBoundingBoxMsg.frontTopRightY();
-    rosBoundingBoxMsg.front_top_right.z    = simBoundingBoxMsg.frontTopRightZ();
+    rosBoundingBoxMsg.front_top_right.x    = simBoundingBoxMsg.frontTopRightX;
+    rosBoundingBoxMsg.front_top_right.y    = simBoundingBoxMsg.frontTopRightY;
+    rosBoundingBoxMsg.front_top_right.z    = simBoundingBoxMsg.frontTopRightZ;
 
-    rosBoundingBoxMsg.front_bottom_left.x  = simBoundingBoxMsg.frontbottomLeftX();
-    rosBoundingBoxMsg.front_bottom_left.y  = simBoundingBoxMsg.frontbottomLeftY();
-    rosBoundingBoxMsg.front_bottom_left.z  = simBoundingBoxMsg.frontbottomLeftZ();
+    rosBoundingBoxMsg.front_bottom_left.x  = simBoundingBoxMsg.frontbottomLeftX;
+    rosBoundingBoxMsg.front_bottom_left.y  = simBoundingBoxMsg.frontbottomLeftY;
+    rosBoundingBoxMsg.front_bottom_left.z  = simBoundingBoxMsg.frontbottomLeftZ;
 
-    rosBoundingBoxMsg.front_top_left.x     = simBoundingBoxMsg.frontTopLeftX();
-    rosBoundingBoxMsg.front_top_left.y     = simBoundingBoxMsg.frontTopLeftY();
-    rosBoundingBoxMsg.front_top_left.z     = simBoundingBoxMsg.frontTopLeftZ();
+    rosBoundingBoxMsg.front_top_left.x     = simBoundingBoxMsg.frontTopLeftX;
+    rosBoundingBoxMsg.front_top_left.y     = simBoundingBoxMsg.frontTopLeftY;
+    rosBoundingBoxMsg.front_top_left.z     = simBoundingBoxMsg.frontTopLeftZ;
 
     rosMsg.bounding_boxes.push_back(rosBoundingBoxMsg);
   }
@@ -96,7 +98,10 @@ void convert(IndyDS::SensorMovableTargetsBoundingBoxes IN simMsg, vrxperience_ms
 int main(int argc, char *argv[])
 {
   rclcpp::init(argc, argv);
-  SimDataReceiver<IndyDS::SensorMovableTargetsBoundingBoxes, vrxperience_msgs::msg::MovableTargetsBoundingBoxes> receiver("recv_movable_targets_bounding_boxes", &convert);
+  MovableTargetsBoundingBoxesReceiver receiver("recv_movable_targets_bounding_boxes",
+                                               IndyDS_SensorMovableTargetsBoundingBoxes_desc,
+                                               &convert);
+
   world_frame   = receiver.declare_parameter("world_frame", "world");
   vehicle_frame = receiver.declare_parameter("vehicle_frame", "base_link");
   sensor_frame  = receiver.declare_parameter("sensor_frame", "");

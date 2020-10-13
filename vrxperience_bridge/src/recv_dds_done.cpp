@@ -12,19 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <dds/core/BuiltinTopicTypes.hpp>
-#include "std_msgs/msg/byte_multi_array.hpp"
 #include "vrxperience_bridge/sim_data_receiver.hpp"
+#include "std_msgs/msg/byte_multi_array.hpp"
+#include "DDS_Octets.h"
 
 using vrxperience_bridge::SimDataReceiver;
+typedef SimDataReceiver<DDS_Octets, std_msgs::msg::ByteMultiArray> DDSDoneReceiver;
 
-void convert(dds::core::BytesTopicType IN simMsg, std_msgs::msg::ByteMultiArray OUT rosMsg)
+void convert(DDS_Octets IN simMsg, std_msgs::msg::ByteMultiArray OUT rosMsg)
 {
-  rosMsg.data = std_msgs::msg::ByteMultiArray::_data_type(simMsg.data());
+  for (int i = 0; i < simMsg.value._length; i++)
+  {
+    rosMsg.data.push_back(simMsg.value._buffer[i]);
+  }
 }
 int main(int argc, char *argv[])
 {
   rclcpp::init(argc, argv);
-  SimDataReceiver<dds::core::BytesTopicType, std_msgs::msg::ByteMultiArray> receiver("recv_dds_done", &convert);
+  DDSDoneReceiver receiver("recv_dds_done", DDS_Octets_desc, &convert);
   receiver.run();
 }

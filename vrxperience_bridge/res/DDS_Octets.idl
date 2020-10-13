@@ -1,0 +1,7 @@
+module DDS {
+
+  struct Octets {
+    sequence<octet> value;
+  };
+  #pragma keylist Octets
+};

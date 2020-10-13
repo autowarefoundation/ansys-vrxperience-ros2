@@ -14,27 +14,30 @@
 
 #include "vrxperience_bridge/sim_data_sender.hpp"
 #include "vrxperience_msgs/msg/cab_to_steering_corrective.hpp"
-#include "RtiSCADE_DS_Controller.hpp"
+#include "IndyDS.h"
 
 using vrxperience_bridge::SimDataSender;
-typedef SimDataSender<vrxperience_msgs::msg::CabToSteeringCorrective, IndyDS::CabToSteeringCorrective> CabToSteeringCorrectiveSender;
+typedef SimDataSender<vrxperience_msgs::msg::CabToSteeringCorrective, IndyDS_CabToSteeringCorrective> CabToSteeringCorrectiveSender;
 
-void convert(vrxperience_msgs::msg::CabToSteeringCorrective IN rosMsg, IndyDS::CabToSteeringCorrective OUT simMsg)
+void convert(vrxperience_msgs::msg::CabToSteeringCorrective IN rosMsg, IndyDS_CabToSteeringCorrective OUT simMsg)
 {
-  simMsg.TimeOfUpdate(rosMsg.header.stamp.sec + rosMsg.header.stamp.nanosec * 1e-9);
-  simMsg.AdditiveSteeringWheelAngle(rosMsg.additive_steering_wheel_angle);
-  simMsg.MultiplicativeSteeringWheelAngle(rosMsg.multiplicative_steering_wheel_angle);
-  simMsg.AdditiveSteeringWheelSpeed(rosMsg.additive_steering_wheel_speed);
-  simMsg.MultiplicativeSteeringWheelSpeed(rosMsg.additive_steering_wheel_speed);
-  simMsg.AdditiveSteeringWheelAccel(rosMsg.additive_steering_wheel_accel);
-  simMsg.MultiplicativeSteeringWheelAccel(rosMsg.multiplicative_steering_wheel_accel);
-  simMsg.AdditiveSteeringWheelTorque(rosMsg.additive_steering_wheel_torque);
-  simMsg.MultiplicativeSteeringWheelTorque(rosMsg.multiplicative_steering_wheel_torque);
+  simMsg.TimeOfUpdate = rosMsg.header.stamp.sec + rosMsg.header.stamp.nanosec * 1e-9;
+  simMsg.AdditiveSteeringWheelAngle = rosMsg.additive_steering_wheel_angle;
+  simMsg.MultiplicativeSteeringWheelAngle = rosMsg.multiplicative_steering_wheel_angle;
+  simMsg.AdditiveSteeringWheelSpeed = rosMsg.additive_steering_wheel_speed;
+  simMsg.MultiplicativeSteeringWheelSpeed = rosMsg.additive_steering_wheel_speed;
+  simMsg.AdditiveSteeringWheelAccel = rosMsg.additive_steering_wheel_accel;
+  simMsg.MultiplicativeSteeringWheelAccel = rosMsg.multiplicative_steering_wheel_accel;
+  simMsg.AdditiveSteeringWheelTorque = rosMsg.additive_steering_wheel_torque;
+  simMsg.MultiplicativeSteeringWheelTorque = rosMsg.multiplicative_steering_wheel_torque;
 }
 
 int main(int argc, char *argv[])
 {
   rclcpp::init(argc, argv);
-  auto sender = std::make_shared<CabToSteeringCorrectiveSender>("send_cab_to_steering_corrective", &convert);
+  auto sender = std::make_shared<CabToSteeringCorrectiveSender>("send_cab_to_steering_corrective",
+                                                                IndyDS_CabToModelCorrective_desc,
+                                                                &convert);
+
   rclcpp::spin(sender);
 }

@@ -16,114 +16,115 @@
 
 #include "vrxperience_bridge/sim_data_receiver.hpp"
 #include "vrxperience_msgs/msg/vehicle_output.hpp"
-#include "RtiSCADE_DS_Controller.hpp"
+#include "IndyDS.h"
 
 using vrxperience_bridge::SimDataReceiver;
+typedef SimDataReceiver<IndyDS_VehicleOutput, vrxperience_msgs::msg::VehicleOutput> VehicleOutputReceiver;
 
-void convert(IndyDS::VehicleOutput IN simMsg, vrxperience_msgs::msg::VehicleOutput OUT rosMsg)
+void convert(IndyDS_VehicleOutput IN simMsg, vrxperience_msgs::msg::VehicleOutput OUT rosMsg)
 {
-  rosMsg.header.stamp.sec = (int) simMsg.TimeOfUpdate();
-  rosMsg.header.stamp.nanosec = ((int) (simMsg.TimeOfUpdate() * 1e9)) % ((int) 1e9);
+  rosMsg.header.stamp.sec = (int) simMsg.TimeOfUpdate;
+  rosMsg.header.stamp.nanosec = ((int) (simMsg.TimeOfUpdate * 1e9)) % ((int) 1e9);
 
-  rosMsg.cdg_speed.x = simMsg.cdgSpeed_x();
-  rosMsg.cdg_speed.y = simMsg.cdgSpeed_y();
-  rosMsg.cdg_speed.z = simMsg.cdgSpeed_z();
+  rosMsg.cdg_speed.x = simMsg.cdgSpeed_x;
+  rosMsg.cdg_speed.y = simMsg.cdgSpeed_y;
+  rosMsg.cdg_speed.z = simMsg.cdgSpeed_z;
 
-  rosMsg.cdg_angular_speed.x = simMsg.cdgSpeed_roll();
-  rosMsg.cdg_angular_speed.y = simMsg.cdgSpeed_pitch();
-  rosMsg.cdg_angular_speed.z = simMsg.cdgSpeed_heading();
+  rosMsg.cdg_angular_speed.x = simMsg.cdgSpeed_roll;
+  rosMsg.cdg_angular_speed.y = simMsg.cdgSpeed_pitch;
+  rosMsg.cdg_angular_speed.z = simMsg.cdgSpeed_heading;
 
-  rosMsg.cdg_accel.x = simMsg.cdgAccel_x();
-  rosMsg.cdg_accel.y = simMsg.cdgAccel_y();
-  rosMsg.cdg_accel.z = simMsg.cdgAccel_z();
+  rosMsg.cdg_accel.x = simMsg.cdgAccel_x;
+  rosMsg.cdg_accel.y = simMsg.cdgAccel_y;
+  rosMsg.cdg_accel.z = simMsg.cdgAccel_z;
 
-  rosMsg.cdg_angular_accel.x = simMsg.cdgAccel_roll();
-  rosMsg.cdg_angular_accel.y = simMsg.cdgAccel_pitch();
-  rosMsg.cdg_angular_accel.z = simMsg.cdgAccel_heading();
+  rosMsg.cdg_angular_accel.x = simMsg.cdgAccel_roll;
+  rosMsg.cdg_angular_accel.y = simMsg.cdgAccel_pitch;
+  rosMsg.cdg_angular_accel.z = simMsg.cdgAccel_heading;
 
-  rosMsg.cdg_position.x = simMsg.cdgPos_x();
-  rosMsg.cdg_position.y = simMsg.cdgPos_y();
-  rosMsg.cdg_position.z = simMsg.cdgPos_z();
+  rosMsg.cdg_position.x = simMsg.cdgPos_x;
+  rosMsg.cdg_position.y = simMsg.cdgPos_y;
+  rosMsg.cdg_position.z = simMsg.cdgPos_z;
 
-  rosMsg.cdg_orientation.x = simMsg.cdgPos_roll();
-  rosMsg.cdg_orientation.y = simMsg.cdgPos_pitch();
-  rosMsg.cdg_orientation.z = simMsg.cdgPos_heading();
+  rosMsg.cdg_orientation.x = simMsg.cdgPos_roll;
+  rosMsg.cdg_orientation.y = simMsg.cdgPos_pitch;
+  rosMsg.cdg_orientation.z = simMsg.cdgPos_heading;
 
-  rosMsg.lights = simMsg.lights();
-  rosMsg.sirens = simMsg.sirens();
-  rosMsg.auxilary_lights = simMsg.auxiliaryLights();
-  rosMsg.engine_state = simMsg.EngineState();
-  rosMsg.consumption = simMsg.consumption();
-  rosMsg.pollution = simMsg.pollution();
-  rosMsg.engine_speed = simMsg.EngineSpeed();
-  rosMsg.gear_engaged = simMsg.GearEngaged();
-  rosMsg.gas_pedal = simMsg.gasPedal();
-  rosMsg.brake_pedal = simMsg.brakePedal();
-  rosMsg.hand_brake = simMsg.handBrake();
-  rosMsg.clutch_pedal = simMsg.clutchPedal();
-  rosMsg.gear_box_mode = simMsg.GearBoxMode();
-  rosMsg.effective_ignition_key_position = simMsg.effectiveIgnitionKeyPosition();
-  rosMsg.is_engine_retarder = simMsg.isEngineRetarder();
-  rosMsg.brake_retarder_notch = simMsg.brakeRetarderNotch();
-  rosMsg.transfer_choice = simMsg.transferChoice();
-  rosMsg.lock_diff_mode = simMsg.lockDiffMode();
-  rosMsg.force_lockup = simMsg.forceLockup();
-  rosMsg.steering_wheel_angle = simMsg.SteeringWheelAngle();
-  rosMsg.steering_wheel_speed = simMsg.SteeringWheelSpeed();
-  rosMsg.steering_wheel_accel = simMsg.SteeringWheelAccel();
-  rosMsg.steering_wheel_torque = simMsg.SteeringWheelTorque();
+  rosMsg.lights = simMsg.lights;
+  rosMsg.sirens = simMsg.sirens;
+  rosMsg.auxilary_lights = simMsg.auxiliaryLights;
+  rosMsg.engine_state = simMsg.EngineState;
+  rosMsg.consumption = simMsg.consumption;
+  rosMsg.pollution = simMsg.pollution;
+  rosMsg.engine_speed = simMsg.EngineSpeed;
+  rosMsg.gear_engaged = simMsg.GearEngaged;
+  rosMsg.gas_pedal = simMsg.gasPedal;
+  rosMsg.brake_pedal = simMsg.brakePedal;
+  rosMsg.hand_brake = simMsg.handBrake;
+  rosMsg.clutch_pedal = simMsg.clutchPedal;
+  rosMsg.gear_box_mode = simMsg.GearBoxMode;
+  rosMsg.effective_ignition_key_position = simMsg.effectiveIgnitionKeyPosition;
+  rosMsg.is_engine_retarder = simMsg.isEngineRetarder;
+  rosMsg.brake_retarder_notch = simMsg.brakeRetarderNotch;
+  rosMsg.transfer_choice = simMsg.transferChoice;
+  rosMsg.lock_diff_mode = simMsg.lockDiffMode;
+  rosMsg.force_lockup = simMsg.forceLockup;
+  rosMsg.steering_wheel_angle = simMsg.SteeringWheelAngle;
+  rosMsg.steering_wheel_speed = simMsg.SteeringWheelSpeed;
+  rosMsg.steering_wheel_accel = simMsg.SteeringWheelAccel;
+  rosMsg.steering_wheel_torque = simMsg.SteeringWheelTorque;
 
   for (int i = 0; i < 4; i++)
   {
-    rosMsg.hub_position[i].x = simMsg.hubPosition_x()[i];
-    rosMsg.hub_position[i].y = simMsg.hubPosition_y()[i];
-    rosMsg.hub_position[i].z = simMsg.hubPosition_z()[i];
+    rosMsg.hub_position[i].x = simMsg.hubPosition_x[i];
+    rosMsg.hub_position[i].y = simMsg.hubPosition_y[i];
+    rosMsg.hub_position[i].z = simMsg.hubPosition_z[i];
 
-    rosMsg.hub_orientation[i].x = simMsg.hubPosition_roll()[i];
-    rosMsg.hub_orientation[i].y = simMsg.hubPosition_pitch()[i];
-    rosMsg.hub_orientation[i].z = simMsg.hubPosition_heading()[i];
+    rosMsg.hub_orientation[i].x = simMsg.hubPosition_roll[i];
+    rosMsg.hub_orientation[i].y = simMsg.hubPosition_pitch[i];
+    rosMsg.hub_orientation[i].z = simMsg.hubPosition_heading[i];
 
-    rosMsg.wheel_rotation[i] = simMsg.wheelRotation()[i];
-    rosMsg.wheel_rotation_speed[i] = simMsg.wheelRotationSpeed()[i];
-    rosMsg.brake_temperature[i] = simMsg.brakeTemperature()[i];
-    rosMsg.abs_is_active[i] = simMsg.absIsActive()[i];
-    rosMsg.is_in_contact[i] = simMsg.isInContact()[i];
+    rosMsg.wheel_rotation[i] = simMsg.wheelRotation[i];
+    rosMsg.wheel_rotation_speed[i] = simMsg.wheelRotationSpeed[i];
+    rosMsg.brake_temperature[i] = simMsg.brakeTemperature[i];
+    rosMsg.abs_is_active[i] = simMsg.absIsActive[i];
+    rosMsg.is_in_contact[i] = simMsg.isInContact[i];
 
-    rosMsg.contact_points[i].x = simMsg.contactPoint_x()[i];
-    rosMsg.contact_points[i].y = simMsg.contactPoint_y()[i];
-    rosMsg.contact_points[i].z = simMsg.contactPoint_z()[i];
+    rosMsg.contact_points[i].x = simMsg.contactPoint_x[i];
+    rosMsg.contact_points[i].y = simMsg.contactPoint_y[i];
+    rosMsg.contact_points[i].z = simMsg.contactPoint_z[i];
 
-    rosMsg.ground_normals[i].x = simMsg.groundNormal_x()[i];
-    rosMsg.ground_normals[i].y = simMsg.groundNormal_y()[i];
-    rosMsg.ground_normals[i].z = simMsg.groundNormal_z()[i];
+    rosMsg.ground_normals[i].x = simMsg.groundNormal_x[i];
+    rosMsg.ground_normals[i].y = simMsg.groundNormal_y[i];
+    rosMsg.ground_normals[i].z = simMsg.groundNormal_z[i];
 
-    rosMsg.grip[i] = simMsg.grip()[i];
-    rosMsg.ground_index[i] = simMsg.GroundIndex()[i];
-    rosMsg.lsr[i] = simMsg.LSR()[i];
-    rosMsg.slip_angle[i] = simMsg.slipAngle()[i];
+    rosMsg.grip[i] = simMsg.grip[i];
+    rosMsg.ground_index[i] = simMsg.GroundIndex[i];
+    rosMsg.lsr[i] = simMsg.LSR[i];
+    rosMsg.slip_angle[i] = simMsg.slipAngle[i];
 
-    rosMsg.tire_force[i].x = simMsg.tireForce_x()[i];
-    rosMsg.tire_force[i].y = simMsg.tireForce_y()[i];
-    rosMsg.tire_force[i].z = simMsg.tireForce_z()[i];
+    rosMsg.tire_force[i].x = simMsg.tireForce_x[i];
+    rosMsg.tire_force[i].y = simMsg.tireForce_y[i];
+    rosMsg.tire_force[i].z = simMsg.tireForce_z[i];
 
-    rosMsg.lane_type[i] = simMsg.laneType()[i];
-    rosMsg.roughness_height[i] = simMsg.roughnessHeight()[i];
-    rosMsg.roughness_length[i] = simMsg.roughnessLength()[i];
-    rosMsg.roughness_height_stddev[i] = simMsg.roughnessHeightStdDeviation()[i];
-    rosMsg.roughness_length_stddev[i] = simMsg.roughnessLengthStdDeviation()[i];
-    rosMsg.ground_type[i] = simMsg.groundType()[i];
-    rosMsg.water_height[i] = simMsg.waterHeight()[i];
+    rosMsg.lane_type[i] = simMsg.laneType[i];
+    rosMsg.roughness_height[i] = simMsg.roughnessHeight[i];
+    rosMsg.roughness_length[i] = simMsg.roughnessLength[i];
+    rosMsg.roughness_height_stddev[i] = simMsg.roughnessHeightStdDeviation[i];
+    rosMsg.roughness_length_stddev[i] = simMsg.roughnessLengthStdDeviation[i];
+    rosMsg.ground_type[i] = simMsg.groundType[i];
+    rosMsg.water_height[i] = simMsg.waterHeight[i];
   }
 
   for (int i = 0; i < 512; i++)
   {
-    rosMsg.custom_output[i] = simMsg.CustomOutput()[i];
+    rosMsg.custom_output[i] = simMsg.CustomOutput[i];
   }
 }
 
 int main(int argc, char *argv[])
 {
   rclcpp::init(argc, argv);
-  SimDataReceiver<IndyDS::VehicleOutput, vrxperience_msgs::msg::VehicleOutput> receiver("recv_vehicle_output", &convert);
+  VehicleOutputReceiver receiver("recv_vehicle_output", IndyDS_VehicleOutput_desc, &convert);
   receiver.run();
 }

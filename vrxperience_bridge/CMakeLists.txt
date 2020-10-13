@@ -30,85 +30,67 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 # find dependencies
-find_package(ament_cmake REQUIRED COMPONENTS)
+find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(vrxperience_msgs REQUIRED)
+find_package(CycloneDDS REQUIRED COMPONENTS idlc)
 
-set(CODEGEN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/generated)
-set(
-  CODEGEN_OUTPUT
-  ${CODEGEN_DIR}/RtiSCADE_DS_Controller.cxx
-  ${CODEGEN_DIR}/RtiSCADE_DS_Controller.hpp
-  ${CODEGEN_DIR}/RtiSCADE_DS_ControllerImpl.cxx
-  ${CODEGEN_DIR}/RtiSCADE_DS_ControllerImpl.h
-  ${CODEGEN_DIR}/RtiSCADE_DS_ControllerImplPlugin.cxx
-  ${CODEGEN_DIR}/RtiSCADE_DS_ControllerImplPlugin.h
-)
+idlc_generate(IndyDS_lib "res/IndyDS.idl")
+idlc_generate(DDS_Octets_lib "res/DDS_Octets.idl")
 
-set(
-  RTI_INCLUDE_DIRS
-  $ENV{NDDSHOME}/include
-  $ENV{NDDSHOME}/include/ndds
-  $ENV{NDDSHOME}/include/ndds/hpp
-)
+include_directories(include)
+link_libraries(IndyDS_lib DDS_Octets_lib CycloneDDS::ddsc)
 
-include_directories(include ${CODEGEN_DIR} ${RTI_INCLUDE_DIRS})
-
-set(RTI_TARGET_ARCH x64Linux3gcc5.4.0)
-link_directories($ENV{NDDSHOME}/lib/${RTI_TARGET_ARCH})
-link_libraries(nddscpp2 nddsc nddscore dl nsl m pthread rt)
-add_definitions(-DRTI_UNIX -DRTI_LINUX -DRTI_64BIT)
-
-add_executable(recv_road_lines_polynoms src/recv_road_lines_polynoms.cpp ${CODEGEN_OUTPUT})
+add_executable(recv_road_lines_polynoms src/recv_road_lines_polynoms.cpp)
 ament_target_dependencies(recv_road_lines_polynoms rclcpp vrxperience_msgs)
 install(
   TARGETS recv_road_lines_polynoms
   DESTINATION lib/${PROJECT_NAME}
 )
 
-add_executable(recv_movable_targets_bounding_boxes src/recv_movable_targets_bounding_boxes.cpp ${CODEGEN_OUTPUT})
+add_executable(recv_movable_targets_bounding_boxes src/recv_movable_targets_bounding_boxes.cpp)
 ament_target_dependencies(recv_movable_targets_bounding_boxes rclcpp vrxperience_msgs)
 install(
   TARGETS recv_movable_targets_bounding_boxes
   DESTINATION lib/${PROJECT_NAME}
 )
 
-add_executable(recv_gps src/recv_gps.cpp ${CODEGEN_OUTPUT})
+add_executable(recv_gps src/recv_gps.cpp)
 ament_target_dependencies(recv_gps rclcpp vrxperience_msgs)
 install(
   TARGETS recv_gps
   DESTINATION lib/${PROJECT_NAME}
 )
 
-add_executable(recv_laser_meter src/recv_laser_meter.cpp ${CODEGEN_OUTPUT})
+add_executable(recv_laser_meter src/recv_laser_meter.cpp)
 ament_target_dependencies(recv_laser_meter rclcpp vrxperience_msgs)
 install(
   TARGETS recv_laser_meter
   DESTINATION lib/${PROJECT_NAME}
 )
 
-add_executable(recv_movable_targets src/recv_movable_targets.cpp ${CODEGEN_OUTPUT})
+add_executable(recv_movable_targets src/recv_movable_targets.cpp)
 ament_target_dependencies(recv_movable_targets rclcpp vrxperience_msgs)
 install(
   TARGETS recv_movable_targets
   DESTINATION lib/${PROJECT_NAME}
 )
 
-add_executable(recv_vehicle_output src/recv_vehicle_output.cpp ${CODEGEN_OUTPUT})
+add_executable(recv_vehicle_output src/recv_vehicle_output.cpp)
 ament_target_dependencies(recv_vehicle_output rclcpp vrxperience_msgs)
 install(
   TARGETS recv_vehicle_output
   DESTINATION lib/${PROJECT_NAME}
 )
 
-add_executable(send_cab_to_model_corrective src/send_cab_to_model_corrective.cpp ${CODEGEN_OUTPUT})
+add_executable(send_cab_to_model_corrective src/send_cab_to_model_corrective.cpp)
 ament_target_dependencies(send_cab_to_model_corrective rclcpp vrxperience_msgs)
 install(
   TARGETS send_cab_to_model_corrective
   DESTINATION lib/${PROJECT_NAME}
 )
 
-add_executable(send_cab_to_steering_corrective src/send_cab_to_steering_corrective.cpp ${CODEGEN_OUTPUT})
+add_executable(send_cab_to_steering_corrective src/send_cab_to_steering_corrective.cpp)
 ament_target_dependencies(send_cab_to_steering_corrective rclcpp vrxperience_msgs)
 install(
   TARGETS send_cab_to_steering_corrective
