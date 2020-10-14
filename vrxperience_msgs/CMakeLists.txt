@@ -49,7 +49,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/RoadLinesPolynoms.msg"
   "msg/VehicleOutput.msg"
   DEPENDENCIES std_msgs geometry_msgs
- )
+)
 
 
 if(BUILD_TESTING)
