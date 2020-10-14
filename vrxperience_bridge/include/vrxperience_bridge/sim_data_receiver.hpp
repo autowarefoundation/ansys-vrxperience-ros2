@@ -55,18 +55,25 @@ public:
     void *samples[MAX_SAMPLES];
     dds_sample_info_t infos[MAX_SAMPLES];
 
+    // Allocate memory to hold samples
+    for (int i = 0; i < MAX_SAMPLES; i++)
+    {
+      samples[i] = dds_alloc(sizeof(SimMsg));
+    }
+
     while (rclcpp::ok())
     {
       auto ret = dds_read(reader, samples, infos, MAX_SAMPLES, MAX_SAMPLES);
 
-      // Check if we read some data and it is valid
-      if ((ret > 0) && (infos[0].valid_data))
+      // Iterate through the samples and publish to ROS 2 if there are any new
+      for (int i = 0; i < ret; i++)
       {
-        RosMsg rosMsg;
-
-        // Convert the received sample to ROS 2 message and publish it
-        (*convert_)(*((SimMsg*) samples[0]), rosMsg);
-        ros_publisher_->publish(rosMsg);
+        if (infos[i].sample_state == DDS_SST_NOT_READ && infos[i].valid_data)
+        {
+          RosMsg rosMsg;
+          (*convert_)(*((SimMsg*) samples[0]), rosMsg);
+          ros_publisher_->publish(rosMsg);
+        }
       }
     }
   }
