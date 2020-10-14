@@ -14,7 +14,7 @@
 
 #include "vrxperience_bridge/sim_data_receiver.hpp"
 #include "vrxperience_msgs/msg/road_lines_polynoms.hpp"
-#include "IndyDS.h"
+#include "IndyDS_RoadLinesPolynoms.h"
 
 using vrxperience_bridge::SimDataReceiver;
 typedef SimDataReceiver<IndyDS_RoadLinesPolynoms, vrxperience_msgs::msg::RoadLinesPolynoms> RoadLinesPolynomsReceiver;

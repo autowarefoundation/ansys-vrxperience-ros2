@@ -14,7 +14,7 @@
 
 #include "vrxperience_bridge/sim_data_sender.hpp"
 #include "vrxperience_msgs/msg/cab_to_model_corrective.hpp"
-#include "IndyDS.h"
+#include "IndyDS_CabToModelCorrective.h"
 
 using vrxperience_bridge::SimDataSender;
 typedef SimDataSender<vrxperience_msgs::msg::CabToModelCorrective, IndyDS_CabToModelCorrective> CabToModelCorrectiveSender;

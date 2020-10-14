@@ -14,7 +14,7 @@
 
 #include "vrxperience_bridge/sim_data_receiver.hpp"
 #include "vrxperience_msgs/msg/laser_meter.hpp"
-#include "IndyDS.h"
+#include "IndyDS_LaserMeter.h"
 
 using vrxperience_bridge::SimDataReceiver;
 typedef SimDataReceiver<IndyDS_LaserMeter, vrxperience_msgs::msg::LaserMeter> LaserMeterReceiver;

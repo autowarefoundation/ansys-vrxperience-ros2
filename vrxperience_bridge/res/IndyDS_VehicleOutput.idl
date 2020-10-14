@@ -1,0 +1,98 @@
+// Copyright 2020 Adam Gotlib (WUT Driverless)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module IndyDS {
+
+  struct VehicleOutput {
+        double CustomOutput[512];
+        double EngineSpeed;
+        octet EngineState;
+        long GearBoxMode;
+        long GearEngaged;
+        long GroundIndex[4];
+        double LSR[4];
+        double SteeringWheelAccel;
+        double SteeringWheelAngle;
+        double SteeringWheelSpeed;
+        double SteeringWheelTorque;
+        double TimeOfUpdate;
+        double TraveledDistance;
+        octet absIsActive[4];
+        long auxiliaryLights;
+        double brakePedal;
+        double brakeRetarderNotch;
+        double brakeTemperature[4];
+        double cdgAccel_heading;
+        double cdgAccel_pitch;
+        double cdgAccel_roll;
+        double cdgAccel_x;
+        double cdgAccel_y;
+        double cdgAccel_z;
+        double cdgPos_heading;
+        double cdgPos_pitch;
+        double cdgPos_roll;
+        double cdgPos_x;
+        double cdgPos_y;
+        double cdgPos_z;
+        double cdgSpeed_heading;
+        double cdgSpeed_pitch;
+        double cdgSpeed_roll;
+        double cdgSpeed_x;
+        double cdgSpeed_y;
+        double cdgSpeed_z;
+        double clutchPedal;
+        double consumption;
+        double contactPoint_x[4];
+        double contactPoint_y[4];
+        double contactPoint_z[4];
+        long effectiveIgnitionKeyPosition;
+        octet forceLockup;
+        double gasPedal;
+        double grip[4];
+        double groundNormal_x[4];
+        double groundNormal_y[4];
+        double groundNormal_z[4];
+        long groundType[4];
+        double handBrake;
+        double hubPosition_heading[4];
+        double hubPosition_pitch[4];
+        double hubPosition_roll[4];
+        double hubPosition_x[4];
+        double hubPosition_y[4];
+        double hubPosition_z[4];
+        octet isEngineRetarder;
+        octet isInContact[4];
+        long laneType[4];
+        long lights;
+        long lockDiffMode;
+        long plowMode;
+        double pollution;
+        double roughnessHeight[4];
+        double roughnessHeightStdDeviation[4];
+        double roughnessLength[4];
+        double roughnessLengthStdDeviation[4];
+        long sirens;
+        double slipAngle[4];
+        double tireForce_x[4];
+        double tireForce_y[4];
+        double tireForce_z[4];
+        double trailerBrake;
+        long transferChoice;
+        double waterHeight[4];
+        double wheelRotation[4];
+        double wheelRotationSpeed[4];
+  };
+
+  #pragma keylist VehicleOutput
+};

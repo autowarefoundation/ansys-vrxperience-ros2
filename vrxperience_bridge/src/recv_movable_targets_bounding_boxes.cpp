@@ -14,7 +14,7 @@
 
 #include "vrxperience_bridge/sim_data_receiver.hpp"
 #include "vrxperience_msgs/msg/movable_targets_bounding_boxes.hpp"
-#include "IndyDS.h"
+#include "IndyDS_SensorMovableTargetsBoundingBoxes.h"
 
 using vrxperience_bridge::SimDataReceiver;
 typedef SimDataReceiver<IndyDS_SensorMovableTargetsBoundingBoxes, vrxperience_msgs::msg::MovableTargetsBoundingBoxes> MovableTargetsBoundingBoxesReceiver;

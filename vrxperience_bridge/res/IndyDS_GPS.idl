@@ -12,11 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-module DDS {
+module IndyDS {
 
-  struct Octets {
-    sequence<octet> value;
+  struct GPS {
+        double altitude;
+        long globalId;
+        float hdop;
+        double lastUpdate;
+        double latitude;
+        double longitude;
+        short satellites;
+        short sensorId;
+        short vhlId;
   };
 
-  #pragma keylist Octets
+  #pragma keylist GPS
 };

@@ -12,11 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-module DDS {
+module IndyDS {
 
-  struct Octets {
-    sequence<octet> value;
+  struct LaserMeterPoint {
+        octet hit;
+        float Hangle;
+        float Vangle;
+        double absposx;
+        double absposy;
+        double absposz;
+        float relposx;
+        float relposy;
+        float relposz;
+        float distance;
   };
 
-  #pragma keylist Octets
+  struct LaserMeter {
+        short frameCount;
+        long globalId;
+        double lastUpdate;
+        short nearestPoint;
+        sequence<IndyDS::LaserMeterPoint> resultArray;
+        short sensorId;
+        short vhlId;
+  };
+
+  #pragma keylist LaserMeter
 };

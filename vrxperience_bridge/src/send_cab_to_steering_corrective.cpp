@@ -14,7 +14,7 @@
 
 #include "vrxperience_bridge/sim_data_sender.hpp"
 #include "vrxperience_msgs/msg/cab_to_steering_corrective.hpp"
-#include "IndyDS.h"
+#include "IndyDS_CabToSteeringCorrective.h"
 
 using vrxperience_bridge::SimDataSender;
 typedef SimDataSender<vrxperience_msgs::msg::CabToSteeringCorrective, IndyDS_CabToSteeringCorrective> CabToSteeringCorrectiveSender;

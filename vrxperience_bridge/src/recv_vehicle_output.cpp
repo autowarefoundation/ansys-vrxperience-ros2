@@ -16,7 +16,7 @@
 
 #include "vrxperience_bridge/sim_data_receiver.hpp"
 #include "vrxperience_msgs/msg/vehicle_output.hpp"
-#include "IndyDS.h"
+#include "IndyDS_VehicleOutput.h"
 
 using vrxperience_bridge::SimDataReceiver;
 typedef SimDataReceiver<IndyDS_VehicleOutput, vrxperience_msgs::msg::VehicleOutput> VehicleOutputReceiver;

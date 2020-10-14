@@ -35,14 +35,23 @@ find_package(rclcpp REQUIRED)
 find_package(vrxperience_msgs REQUIRED)
 find_package(CycloneDDS REQUIRED COMPONENTS idlc)
 
-idlc_generate(IndyDS_lib "res/IndyDS.idl")
-idlc_generate(DDS_Octets_lib "res/DDS_Octets.idl")
+# generate code to handle custom DDS data types
+idlc_generate(IndyDS_RoadLinesPolynoms_lib                 "res/IndyDS_RoadLinesPolynoms.idl"                )
+idlc_generate(IndyDS_SensorMovableTargetsBoundingBoxes_lib "res/IndyDS_SensorMovableTargetsBoundingBoxes.idl")
+idlc_generate(IndyDS_GPS_lib                               "res/IndyDS_GPS.idl"                              )
+idlc_generate(IndyDS_LaserMeter_lib                        "res/IndyDS_LaserMeter.idl"                       )
+idlc_generate(IndyDS_SensorMovableTargets_lib              "res/IndyDS_SensorMovableTargets.idl"             )
+idlc_generate(IndyDS_VehicleOutput_lib                     "res/IndyDS_VehicleOutput.idl"                    )
+idlc_generate(IndyDS_CabToModelCorrective_lib              "res/IndyDS_CabToModelCorrective.idl"             )
+idlc_generate(IndyDS_CabToSteeringCorrective_lib           "res/IndyDS_CabToSteeringCorrective.idl"          )
+idlc_generate(DDS_Octets_lib                               "res/DDS_Octets.idl"                              )
 
 include_directories(include)
-link_libraries(IndyDS_lib DDS_Octets_lib CycloneDDS::ddsc)
+link_libraries(CycloneDDS::ddsc)
 
 add_executable(recv_road_lines_polynoms src/recv_road_lines_polynoms.cpp)
 ament_target_dependencies(recv_road_lines_polynoms rclcpp vrxperience_msgs)
+target_link_libraries(recv_road_lines_polynoms IndyDS_RoadLinesPolynoms_lib)
 install(
   TARGETS recv_road_lines_polynoms
   DESTINATION lib/${PROJECT_NAME}
@@ -50,6 +59,7 @@ install(
 
 add_executable(recv_movable_targets_bounding_boxes src/recv_movable_targets_bounding_boxes.cpp)
 ament_target_dependencies(recv_movable_targets_bounding_boxes rclcpp vrxperience_msgs)
+target_link_libraries(recv_movable_targets_bounding_boxes IndyDS_SensorMovableTargetsBoundingBoxes_lib)
 install(
   TARGETS recv_movable_targets_bounding_boxes
   DESTINATION lib/${PROJECT_NAME}
@@ -57,6 +67,7 @@ install(
 
 add_executable(recv_gps src/recv_gps.cpp)
 ament_target_dependencies(recv_gps rclcpp vrxperience_msgs)
+target_link_libraries(recv_gps IndyDS_GPS_lib)
 install(
   TARGETS recv_gps
   DESTINATION lib/${PROJECT_NAME}
@@ -64,6 +75,7 @@ install(
 
 add_executable(recv_laser_meter src/recv_laser_meter.cpp)
 ament_target_dependencies(recv_laser_meter rclcpp vrxperience_msgs)
+target_link_libraries(recv_laser_meter IndyDS_LaserMeter_lib)
 install(
   TARGETS recv_laser_meter
   DESTINATION lib/${PROJECT_NAME}
@@ -71,6 +83,7 @@ install(
 
 add_executable(recv_movable_targets src/recv_movable_targets.cpp)
 ament_target_dependencies(recv_movable_targets rclcpp vrxperience_msgs)
+target_link_libraries(recv_movable_targets IndyDS_SensorMovableTargets_lib)
 install(
   TARGETS recv_movable_targets
   DESTINATION lib/${PROJECT_NAME}
@@ -78,6 +91,7 @@ install(
 
 add_executable(recv_vehicle_output src/recv_vehicle_output.cpp)
 ament_target_dependencies(recv_vehicle_output rclcpp vrxperience_msgs)
+target_link_libraries(recv_vehicle_output IndyDS_VehicleOutput_lib)
 install(
   TARGETS recv_vehicle_output
   DESTINATION lib/${PROJECT_NAME}
@@ -85,6 +99,7 @@ install(
 
 add_executable(send_cab_to_model_corrective src/send_cab_to_model_corrective.cpp)
 ament_target_dependencies(send_cab_to_model_corrective rclcpp vrxperience_msgs)
+target_link_libraries(send_cab_to_model_corrective IndyDS_CabToModelCorrective_lib)
 install(
   TARGETS send_cab_to_model_corrective
   DESTINATION lib/${PROJECT_NAME}
@@ -92,20 +107,23 @@ install(
 
 add_executable(send_cab_to_steering_corrective src/send_cab_to_steering_corrective.cpp)
 ament_target_dependencies(send_cab_to_steering_corrective rclcpp vrxperience_msgs)
+target_link_libraries(send_cab_to_steering_corrective IndyDS_CabToSteeringCorrective_lib)
 install(
   TARGETS send_cab_to_steering_corrective
   DESTINATION lib/${PROJECT_NAME}
 )
 
 add_executable(recv_dds_done src/recv_dds_done.cpp)
-ament_target_dependencies(recv_dds_done rclcpp std_msgs)
+ament_target_dependencies(recv_dds_done rclcpp vrxperience_msgs)
+target_link_libraries(recv_dds_done DDS_Octets_lib)
 install(
   TARGETS recv_dds_done
   DESTINATION lib/${PROJECT_NAME}
 )
 
 add_executable(send_dds_done_reply src/send_dds_done_reply.cpp)
-ament_target_dependencies(send_dds_done_reply rclcpp std_msgs)
+ament_target_dependencies(send_dds_done_reply rclcpp vrxperience_msgs)
+target_link_libraries(send_dds_done_reply DDS_Octets_lib)
 install(
   TARGETS send_dds_done_reply
   DESTINATION lib/${PROJECT_NAME}

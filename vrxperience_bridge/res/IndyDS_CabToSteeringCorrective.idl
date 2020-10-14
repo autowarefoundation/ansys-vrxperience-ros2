@@ -12,11 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-module DDS {
+module IndyDS {
 
-  struct Octets {
-    sequence<octet> value;
+  struct CabToSteeringCorrective {
+        double AdditiveSteeringWheelAccel;
+        double AdditiveSteeringWheelAngle;
+        double AdditiveSteeringWheelSpeed;
+        double AdditiveSteeringWheelTorque;
+        double MultiplicativeSteeringWheelAccel;
+        double MultiplicativeSteeringWheelAngle;
+        double MultiplicativeSteeringWheelSpeed;
+        double MultiplicativeSteeringWheelTorque;
+        double TimeOfUpdate;
   };
 
-  #pragma keylist Octets
+  #pragma keylist CabToSteeringCorrective
 };

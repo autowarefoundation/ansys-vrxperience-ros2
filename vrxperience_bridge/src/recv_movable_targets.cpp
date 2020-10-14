@@ -16,7 +16,7 @@
 
 #include "vrxperience_bridge/sim_data_receiver.hpp"
 #include "vrxperience_msgs/msg/movable_targets.hpp"
-#include "IndyDS.h"
+#include "IndyDS_SensorMovableTargets.h"
 
 using vrxperience_bridge::SimDataReceiver;
 typedef SimDataReceiver<IndyDS_SensorMovableTargets, vrxperience_msgs::msg::MovableTargets> MovableTargetsReceiver;

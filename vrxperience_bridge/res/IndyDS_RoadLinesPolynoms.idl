@@ -12,11 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-module DDS {
+module IndyDS {
 
-  struct Octets {
-    sequence<octet> value;
+  struct RoadLinePolynom {
+        short lineId;
+        double c0;
+        double c1;
+        double c2;
+        double c3;
+        double curvatureRadius;
+        double estimatedCurvatureRadius;
   };
 
-  #pragma keylist Octets
+  struct RoadLinesPolynoms {
+        short egoVhlId;
+        long globalId;
+        octet isNoisy;
+        short referenceFrame;
+        sequence<IndyDS::RoadLinePolynom> roadLinesPolynomsArray;
+        double timeOfUpdate;
+  };
+
+  #pragma keylist RoadLinesPolynoms
 };
