@@ -21,12 +21,11 @@ typedef SimDataReceiver<DDS_Octets, std_msgs::msg::ByteMultiArray> DDSDoneReceiv
 
 void convert(DDS_Octets IN simMsg, std_msgs::msg::ByteMultiArray OUT rosMsg)
 {
-  for (uint32_t i = 0; i < simMsg.value._length; i++)
-  {
+  for (uint32_t i = 0; i < simMsg.value._length; i++) {
     rosMsg.data.push_back(simMsg.value._buffer[i]);
   }
 }
-int main(int argc, char *argv[])
+int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
   DDSDoneReceiver receiver("recv_dds_done", DDS_Octets_desc, &convert);

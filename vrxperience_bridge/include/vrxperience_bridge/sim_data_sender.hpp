@@ -24,27 +24,30 @@
 namespace vrxperience_bridge
 {
 
-template <class RosMsg, class SimMsg>
+template<class RosMsg, class SimMsg>
 class SimDataSender : public rclcpp::Node
 {
 public:
-  typedef void (*ros2sim)(RosMsg IN, SimMsg OUT);
+  typedef void (* ros2sim)(RosMsg IN, SimMsg OUT);
 
   SimDataSender(std::string ros_node_name, dds_topic_descriptor_t dds_topic_desc, ros2sim convert)
-    : Node(ros_node_name), dds_topic_desc_(dds_topic_desc), convert_(convert)
+  : Node(ros_node_name), dds_topic_desc_(dds_topic_desc), convert_(convert)
   {
     // Declare  and read ROS parameters
-    ros_topic_  = declare_parameter("ros_topic", "");
-    dds_topic_  = declare_parameter("dds_topic", "");
+    ros_topic_ = declare_parameter("ros_topic", "");
+    dds_topic_ = declare_parameter("dds_topic", "");
     dds_domain_ = declare_parameter("dds_domain", 0);
 
     // Create DDS Domain Participant with appropriate Topic and Data Writer
     auto participant = dds_create_participant(dds_domain_, nullptr, nullptr);
-    auto topic = dds_create_topic(participant, &dds_topic_desc_, dds_topic_.c_str(), nullptr, nullptr);
+    auto topic = dds_create_topic(
+      participant, &dds_topic_desc_,
+      dds_topic_.c_str(), nullptr, nullptr);
     sim_writer_ = dds_create_writer(participant, topic, nullptr, nullptr);
 
     // Create ROS Subscription
-    std::function<void(const typename RosMsg::SharedPtr rosMsg)> callback = std::bind(&SimDataSender<RosMsg, SimMsg>::topicCallback, this, std::placeholders::_1);
+    std::function<void(const typename RosMsg::SharedPtr rosMsg)> callback = std::bind(
+      &SimDataSender<RosMsg, SimMsg>::topicCallback, this, std::placeholders::_1);
     ros_subscription_ = create_subscription<RosMsg>(ros_topic_, 1, callback);
   }
 

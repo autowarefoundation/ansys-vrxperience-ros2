@@ -32,8 +32,7 @@ void convert(IndyDS_LaserMeter IN simMsg, vrxperience_msgs::msg::LaserMeter OUT 
   rosMsg.sensor_id = simMsg.sensorId;
   rosMsg.nearest_point = simMsg.nearestPoint;
 
-  for (uint32_t i = 0; i < simMsg.resultArray._length; i++)
-  {
+  for (uint32_t i = 0; i < simMsg.resultArray._length; i++) {
     auto simLaserMeterPointMsg = simMsg.resultArray._buffer[i];
     vrxperience_msgs::msg::LaserMeterPoint rosLaserMeterPointMsg;
 
@@ -49,10 +48,10 @@ void convert(IndyDS_LaserMeter IN simMsg, vrxperience_msgs::msg::LaserMeter OUT 
   }
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
   LaserMeterReceiver receiver("recv_movable_targets", IndyDS_LaserMeter_desc, &convert);
-  sensor_frame  = receiver.declare_parameter("sensor_frame", "");
+  sensor_frame = receiver.declare_parameter("sensor_frame", "");
   receiver.run();
 }

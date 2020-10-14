@@ -33,7 +33,7 @@ void convert(IndyDS_GPS IN simMsg, vrxperience_msgs::msg::GPS OUT rosMsg)
   rosMsg.hdop = simMsg.hdop;
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
   GPSReceiver receiver("recv_gps", IndyDS_GPS_desc, &convert);

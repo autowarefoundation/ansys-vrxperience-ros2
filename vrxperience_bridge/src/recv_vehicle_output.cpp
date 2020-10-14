@@ -19,7 +19,8 @@
 #include "IndyDS_VehicleOutput.h"
 
 using vrxperience_bridge::SimDataReceiver;
-typedef SimDataReceiver<IndyDS_VehicleOutput, vrxperience_msgs::msg::VehicleOutput> VehicleOutputReceiver;
+typedef SimDataReceiver<IndyDS_VehicleOutput,
+    vrxperience_msgs::msg::VehicleOutput> VehicleOutputReceiver;
 
 void convert(IndyDS_VehicleOutput IN simMsg, vrxperience_msgs::msg::VehicleOutput OUT rosMsg)
 {
@@ -74,8 +75,7 @@ void convert(IndyDS_VehicleOutput IN simMsg, vrxperience_msgs::msg::VehicleOutpu
   rosMsg.steering_wheel_accel = simMsg.SteeringWheelAccel;
   rosMsg.steering_wheel_torque = simMsg.SteeringWheelTorque;
 
-  for (int i = 0; i < 4; i++)
-  {
+  for (int i = 0; i < 4; i++) {
     rosMsg.hub_position[i].x = simMsg.hubPosition_x[i];
     rosMsg.hub_position[i].y = simMsg.hubPosition_y[i];
     rosMsg.hub_position[i].z = simMsg.hubPosition_z[i];
@@ -116,13 +116,12 @@ void convert(IndyDS_VehicleOutput IN simMsg, vrxperience_msgs::msg::VehicleOutpu
     rosMsg.water_height[i] = simMsg.waterHeight[i];
   }
 
-  for (int i = 0; i < 512; i++)
-  {
+  for (int i = 0; i < 512; i++) {
     rosMsg.custom_output[i] = simMsg.CustomOutput[i];
   }
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
   VehicleOutputReceiver receiver("recv_vehicle_output", IndyDS_VehicleOutput_desc, &convert);

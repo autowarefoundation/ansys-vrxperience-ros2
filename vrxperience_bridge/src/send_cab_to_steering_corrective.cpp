@@ -17,9 +17,12 @@
 #include "IndyDS_CabToSteeringCorrective.h"
 
 using vrxperience_bridge::SimDataSender;
-typedef SimDataSender<vrxperience_msgs::msg::CabToSteeringCorrective, IndyDS_CabToSteeringCorrective> CabToSteeringCorrectiveSender;
+typedef SimDataSender<vrxperience_msgs::msg::CabToSteeringCorrective,
+    IndyDS_CabToSteeringCorrective> CabToSteeringCorrectiveSender;
 
-void convert(vrxperience_msgs::msg::CabToSteeringCorrective IN rosMsg, IndyDS_CabToSteeringCorrective OUT simMsg)
+void convert(
+  vrxperience_msgs::msg::CabToSteeringCorrective IN rosMsg,
+  IndyDS_CabToSteeringCorrective OUT simMsg)
 {
   simMsg.TimeOfUpdate = rosMsg.header.stamp.sec + rosMsg.header.stamp.nanosec * 1e-9;
   simMsg.AdditiveSteeringWheelAngle = rosMsg.additive_steering_wheel_angle;
@@ -32,12 +35,13 @@ void convert(vrxperience_msgs::msg::CabToSteeringCorrective IN rosMsg, IndyDS_Ca
   simMsg.MultiplicativeSteeringWheelTorque = rosMsg.multiplicative_steering_wheel_torque;
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
-  auto sender = std::make_shared<CabToSteeringCorrectiveSender>("send_cab_to_steering_corrective",
-                                                                IndyDS_CabToSteeringCorrective_desc,
-                                                                &convert);
+  auto sender = std::make_shared<CabToSteeringCorrectiveSender>(
+    "send_cab_to_steering_corrective",
+    IndyDS_CabToSteeringCorrective_desc,
+    &convert);
 
   rclcpp::spin(sender);
 }

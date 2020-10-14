@@ -27,18 +27,18 @@
 namespace vrxperience_bridge
 {
 
-template <class SimMsg, class RosMsg>
+template<class SimMsg, class RosMsg>
 class SimDataReceiver : public rclcpp::Node
 {
 public:
-  typedef void (*sim2ros)(SimMsg IN, RosMsg OUT);
+  typedef void (* sim2ros)(SimMsg IN, RosMsg OUT);
 
   SimDataReceiver(std::string ros_node_name, dds_topic_descriptor_t dds_topic_desc, sim2ros convert)
-    : Node(ros_node_name), dds_topic_desc_(dds_topic_desc), convert_(convert)
+  : Node(ros_node_name), dds_topic_desc_(dds_topic_desc), convert_(convert)
   {
     // Declare and read ROS parameters
-    ros_topic_  = declare_parameter("ros_topic", "");
-    dds_topic_  = declare_parameter("dds_topic", "");
+    ros_topic_ = declare_parameter("ros_topic", "");
+    dds_topic_ = declare_parameter("dds_topic", "");
     dds_domain_ = declare_parameter("dds_domain", 0);
   }
 
@@ -46,32 +46,30 @@ public:
   {
     // Create DDS Domain Participant with appropriate Topic and Data Reader
     auto participant = dds_create_participant(dds_domain_, nullptr, nullptr);
-    auto topic = dds_create_topic(participant, &dds_topic_desc_, dds_topic_.c_str(), nullptr, nullptr);
+    auto topic = dds_create_topic(
+      participant, &dds_topic_desc_,
+      dds_topic_.c_str(), nullptr, nullptr);
     auto reader = dds_create_reader(participant, topic, nullptr, nullptr);
 
     // Create ROS Publisher
     ros_publisher_ = create_publisher<RosMsg>(ros_topic_, 1);
 
-    void *samples[MAX_SAMPLES];
+    void * samples[MAX_SAMPLES];
     dds_sample_info_t infos[MAX_SAMPLES];
 
     // Allocate memory to hold samples
-    for (int i = 0; i < MAX_SAMPLES; i++)
-    {
+    for (int i = 0; i < MAX_SAMPLES; i++) {
       samples[i] = dds_alloc(sizeof(SimMsg));
     }
 
-    while (rclcpp::ok())
-    {
+    while (rclcpp::ok()) {
       auto ret = dds_read(reader, samples, infos, MAX_SAMPLES, MAX_SAMPLES);
 
       // Iterate through the samples and publish to ROS 2 if there are any new
-      for (int i = 0; i < ret; i++)
-      {
-        if (infos[i].sample_state == DDS_SST_NOT_READ && infos[i].valid_data)
-        {
+      for (int i = 0; i < ret; i++) {
+        if (infos[i].sample_state == DDS_SST_NOT_READ && infos[i].valid_data) {
           RosMsg rosMsg;
-          (*convert_)(*((SimMsg*) samples[0]), rosMsg);
+          (*convert_)(*((SimMsg *) samples[0]), rosMsg);
           ros_publisher_->publish(rosMsg);
         }
       }

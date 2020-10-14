@@ -32,12 +32,13 @@ void convert(std_msgs::msg::ByteMultiArray IN rosMsg, DDS_Octets OUT simMsg)
   simMsg.value._maximum = 0;
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
-  auto sender = std::make_shared<DDSDoneReplySender>("send_dds_done_reply",
-                                                     DDS_Octets_desc,
-                                                     &convert);
+  auto sender = std::make_shared<DDSDoneReplySender>(
+    "send_dds_done_reply",
+    DDS_Octets_desc,
+    &convert);
 
   rclcpp::spin(sender);
 }

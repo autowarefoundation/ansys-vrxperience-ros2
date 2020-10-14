@@ -17,9 +17,12 @@
 #include "IndyDS_CabToModelCorrective.h"
 
 using vrxperience_bridge::SimDataSender;
-typedef SimDataSender<vrxperience_msgs::msg::CabToModelCorrective, IndyDS_CabToModelCorrective> CabToModelCorrectiveSender;
+typedef SimDataSender<vrxperience_msgs::msg::CabToModelCorrective,
+    IndyDS_CabToModelCorrective> CabToModelCorrectiveSender;
 
-void convert(vrxperience_msgs::msg::CabToModelCorrective IN rosMsg, IndyDS_CabToModelCorrective OUT simMsg)
+void convert(
+  vrxperience_msgs::msg::CabToModelCorrective IN rosMsg,
+  IndyDS_CabToModelCorrective OUT simMsg)
 {
   simMsg.TimeOfUpdate = rosMsg.header.stamp.sec + rosMsg.header.stamp.nanosec * 1e-9;
   simMsg.AcceleratorAdditive = rosMsg.accelerator_additive;
@@ -40,12 +43,13 @@ void convert(vrxperience_msgs::msg::CabToModelCorrective IN rosMsg, IndyDS_CabTo
   simMsg.MaxRatio = rosMsg.max_ratio;
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
-  auto sender = std::make_shared<CabToModelCorrectiveSender>("send_cab_to_model_corrective",
-                                                             IndyDS_CabToModelCorrective_desc,
-                                                             &convert);
+  auto sender = std::make_shared<CabToModelCorrectiveSender>(
+    "send_cab_to_model_corrective",
+    IndyDS_CabToModelCorrective_desc,
+    &convert);
 
   rclcpp::spin(sender);
 }
