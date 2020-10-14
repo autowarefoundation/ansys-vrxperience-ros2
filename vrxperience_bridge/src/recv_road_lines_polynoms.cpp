@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <string>
+
 #include "vrxperience_bridge/sim_data_receiver.hpp"
 #include "vrxperience_msgs/msg/road_lines_polynoms.hpp"
 #include "IndyDS_RoadLinesPolynoms.h"
@@ -24,16 +26,17 @@ const int WORLD_FRAME = 0;
 const int VEHICLE_FRAME = 1;
 const int SENSOR_FRAME = 2;
 
-std::string world_frame;
-std::string vehicle_frame;
-std::string sensor_frame;
+std::string world_frame;  // NOLINT
+std::string vehicle_frame;  // NOLINT
+std::string sensor_frame;  // NOLINT
 
 void convert(
   IndyDS_RoadLinesPolynoms IN simMsg,
   vrxperience_msgs::msg::RoadLinesPolynoms OUT rosMsg)
 {
-  rosMsg.header.stamp.sec = (int) simMsg.timeOfUpdate;
-  rosMsg.header.stamp.nanosec = ((int) (simMsg.timeOfUpdate * 1e9)) % ((int) 1e9);
+  rosMsg.header.stamp.sec = static_cast<int>(simMsg.timeOfUpdate);
+  rosMsg.header.stamp.nanosec =
+    (static_cast<int>(simMsg.timeOfUpdate * 1e9)) % (static_cast<int>(1e9));
 
   switch (simMsg.referenceFrame) {
     case WORLD_FRAME:

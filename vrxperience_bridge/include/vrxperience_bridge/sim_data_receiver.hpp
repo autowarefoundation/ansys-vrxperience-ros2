@@ -12,11 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef SIM_DATA_RECEIVER_HPP
-#define SIM_DATA_RECEIVER_HPP
+#ifndef VRXPERIENCE_BRIDGE__SIM_DATA_RECEIVER_HPP_
+#define VRXPERIENCE_BRIDGE__SIM_DATA_RECEIVER_HPP_
 
 #include <rclcpp/rclcpp.hpp>
 #include <dds/dds.h>
+
+#include <string>
 
 #define IN
 #define OUT &
@@ -69,7 +71,7 @@ public:
       for (int i = 0; i < ret; i++) {
         if (infos[i].sample_state == DDS_SST_NOT_READ && infos[i].valid_data) {
           RosMsg rosMsg;
-          (*convert_)(*((SimMsg *) samples[0]), rosMsg);
+          (*convert_)(*(reinterpret_cast<SimMsg *>(samples[0])), rosMsg);
           ros_publisher_->publish(rosMsg);
         }
       }
@@ -85,8 +87,8 @@ private:
   int dds_domain_;
 
   typename rclcpp::Publisher<RosMsg>::SharedPtr ros_publisher_;
-}; // class SimDataReceiver
+};  // class SimDataReceiver
 
-} // namespace vrxperience_bridge
+}  // namespace vrxperience_bridge
 
-#endif // SIM_DATA_RECEIVER_HPP
+#endif  // VRXPERIENCE_BRIDGE__SIM_DATA_RECEIVER_HPP_

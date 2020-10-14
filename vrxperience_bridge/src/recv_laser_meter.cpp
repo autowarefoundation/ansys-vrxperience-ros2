@@ -19,12 +19,13 @@
 using vrxperience_bridge::SimDataReceiver;
 typedef SimDataReceiver<IndyDS_LaserMeter, vrxperience_msgs::msg::LaserMeter> LaserMeterReceiver;
 
-std::string sensor_frame;
+std::string sensor_frame;  // NOLINT
 
 void convert(IndyDS_LaserMeter IN simMsg, vrxperience_msgs::msg::LaserMeter OUT rosMsg)
 {
-  rosMsg.header.stamp.sec = (int) simMsg.lastUpdate;
-  rosMsg.header.stamp.nanosec = ((int) (simMsg.lastUpdate * 1e9)) % ((int) 1e9);
+  rosMsg.header.stamp.sec = static_cast<int>(simMsg.lastUpdate);
+  rosMsg.header.stamp.nanosec =
+    (static_cast<int>(simMsg.lastUpdate * 1e9)) % (static_cast<int>(1e9));
   rosMsg.header.frame_id = sensor_frame;
 
   rosMsg.global_id = simMsg.globalId;

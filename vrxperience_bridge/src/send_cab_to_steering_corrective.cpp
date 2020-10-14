@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <memory>
+
 #include "vrxperience_bridge/sim_data_sender.hpp"
 #include "vrxperience_msgs/msg/cab_to_steering_corrective.hpp"
 #include "IndyDS_CabToSteeringCorrective.h"

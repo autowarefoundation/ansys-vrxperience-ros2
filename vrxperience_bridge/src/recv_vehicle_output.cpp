@@ -24,8 +24,9 @@ typedef SimDataReceiver<IndyDS_VehicleOutput,
 
 void convert(IndyDS_VehicleOutput IN simMsg, vrxperience_msgs::msg::VehicleOutput OUT rosMsg)
 {
-  rosMsg.header.stamp.sec = (int) simMsg.TimeOfUpdate;
-  rosMsg.header.stamp.nanosec = ((int) (simMsg.TimeOfUpdate * 1e9)) % ((int) 1e9);
+  rosMsg.header.stamp.sec = static_cast<int>(simMsg.TimeOfUpdate);
+  rosMsg.header.stamp.nanosec =
+    (static_cast<int>(simMsg.TimeOfUpdate * 1e9)) % (static_cast<int>(1e9));
 
   rosMsg.cdg_speed.x = simMsg.cdgSpeed_x;
   rosMsg.cdg_speed.y = simMsg.cdgSpeed_y;

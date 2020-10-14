@@ -14,6 +14,8 @@
 
 #include <tf2/LinearMath/Quaternion.h>
 
+#include <string>
+
 #include "vrxperience_bridge/sim_data_receiver.hpp"
 #include "vrxperience_msgs/msg/movable_targets.hpp"
 #include "IndyDS_SensorMovableTargets.h"
@@ -26,16 +28,17 @@ const int WORLD_FRAME = 0;
 const int VEHICLE_FRAME = 1;
 const int SENSOR_FRAME = 2;
 
-std::string world_frame;
-std::string vehicle_frame;
-std::string sensor_frame;
+std::string world_frame;  // NOLINT
+std::string vehicle_frame;  // NOLINT
+std::string sensor_frame;  // NOLINT
 
 void convert(
   IndyDS_SensorMovableTargets IN simMsg,
   vrxperience_msgs::msg::MovableTargets OUT rosMsg)
 {
-  rosMsg.header.stamp.sec = (int) simMsg.timeOfUpdate;
-  rosMsg.header.stamp.nanosec = ((int) (simMsg.timeOfUpdate * 1e9)) % ((int) 1e9);
+  rosMsg.header.stamp.sec = static_cast<int>(simMsg.timeOfUpdate);
+  rosMsg.header.stamp.nanosec =
+    (static_cast<int>(simMsg.timeOfUpdate * 1e9)) % (static_cast<int>(1e9));
 
   rosMsg.global_id = simMsg.globalId;
   rosMsg.ego_vehicle_id = simMsg.egoVhlId;
@@ -45,8 +48,9 @@ void convert(
     auto simMovableTargetMsg = simMsg.targetsArray._buffer[i];
     vrxperience_msgs::msg::MovableTarget rosMovableTargetMsg;
 
-    rosMovableTargetMsg.header.stamp.sec = (int) simMsg.timeOfUpdate;
-    rosMovableTargetMsg.header.stamp.nanosec = ((int) (simMsg.timeOfUpdate * 1e9)) % ((int) 1e9);
+    rosMovableTargetMsg.header.stamp.sec = static_cast<int>(simMsg.timeOfUpdate);
+    rosMovableTargetMsg.header.stamp.nanosec =
+      (static_cast<int>(simMsg.timeOfUpdate * 1e9)) % (static_cast<int>(1e9));
 
     switch (simMovableTargetMsg.referenceFrame) {
       case WORLD_FRAME:

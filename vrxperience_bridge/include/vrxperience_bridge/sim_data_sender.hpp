@@ -12,11 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef SIM_DATA_SENDER_HPP
-#define SIM_DATA_SENDER_HPP
+#ifndef VRXPERIENCE_BRIDGE__SIM_DATA_SENDER_HPP_
+#define VRXPERIENCE_BRIDGE__SIM_DATA_SENDER_HPP_
 
 #include <rclcpp/rclcpp.hpp>
 #include <dds/dds.h>
+
+#include <string>
 
 #define IN
 #define OUT &
@@ -68,8 +70,8 @@ private:
 
   typename rclcpp::Subscription<RosMsg>::SharedPtr ros_subscription_;
   dds_entity_t sim_writer_;
-}; // class SimDataSender
+};  // class SimDataSender
 
-} // namespace vrxperience_bridge
+}  // namespace vrxperience_bridge
 
-#endif // SIM_DATA_SENDER_HPP
+#endif  // VRXPERIENCE_BRIDGE__SIM_DATA_SENDER_HPP_
