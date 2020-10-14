@@ -12,23 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "vrxperience_bridge/sim_data_receiver.hpp"
-#include "std_msgs/msg/byte_multi_array.hpp"
-#include "DDS_Octets.h"
+module IndyDS {
 
-using vrxperience_bridge::SimDataReceiver;
-typedef SimDataReceiver<DDS_Octets, std_msgs::msg::ByteMultiArray> DDSDoneReceiver;
+  struct GPS {
+        double altitude;
+        long globalId;
+        float hdop;
+        double lastUpdate;
+        double latitude;
+        double longitude;
+        short satellites;
+        short sensorId;
+        short vhlId;
+  };
 
-void convert(DDS_Octets IN simMsg, std_msgs::msg::ByteMultiArray OUT rosMsg)
-{
-  for (uint32_t i = 0; i < simMsg.value._length; i++)
-  {
-    rosMsg.data.push_back(simMsg.value._buffer[i]);
-  }
-}
-int main(int argc, char *argv[])
-{
-  rclcpp::init(argc, argv);
-  DDSDoneReceiver receiver("recv_dds_done", DDS_Octets_desc, &convert);
-  receiver.run();
-}
+  #pragma keylist GPS
+};

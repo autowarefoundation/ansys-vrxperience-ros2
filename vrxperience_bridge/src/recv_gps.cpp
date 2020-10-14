@@ -14,27 +14,28 @@
 
 #include "vrxperience_bridge/sim_data_receiver.hpp"
 #include "vrxperience_msgs/msg/gps.hpp"
-#include "RtiSCADE_DS_Controller.hpp"
+#include "IndyDS_GPS.h"
 
 using vrxperience_bridge::SimDataReceiver;
+typedef SimDataReceiver<IndyDS_GPS, vrxperience_msgs::msg::GPS> GPSReceiver;
 
-void convert(IndyDS::GPS IN simMsg, vrxperience_msgs::msg::GPS OUT rosMsg)
+void convert(IndyDS_GPS IN simMsg, vrxperience_msgs::msg::GPS OUT rosMsg)
 {
-  rosMsg.header.stamp.sec = (int) simMsg.lastUpdate();
-  rosMsg.header.stamp.nanosec = ((int) (simMsg.lastUpdate() * 1e9)) % ((int) 1e9);
+  rosMsg.header.stamp.sec = (int) simMsg.lastUpdate;
+  rosMsg.header.stamp.nanosec = ((int) (simMsg.lastUpdate * 1e9)) % ((int) 1e9);
 
-  rosMsg.global_id = simMsg.globalId();
-  rosMsg.ego_vehicle_id = simMsg.vhlId();
-  rosMsg.sensor_id = simMsg.sensorId();
-  rosMsg.latitude = simMsg.latitude();
-  rosMsg.longitude = simMsg.longitude();
-  rosMsg.satellites = simMsg.satellites();
-  rosMsg.hdop = simMsg.hdop();
+  rosMsg.global_id = simMsg.globalId;
+  rosMsg.ego_vehicle_id = simMsg.vhlId;
+  rosMsg.sensor_id = simMsg.sensorId;
+  rosMsg.latitude = simMsg.latitude;
+  rosMsg.longitude = simMsg.longitude;
+  rosMsg.satellites = simMsg.satellites;
+  rosMsg.hdop = simMsg.hdop;
 }
 
 int main(int argc, char *argv[])
 {
   rclcpp::init(argc, argv);
-  SimDataReceiver<IndyDS::GPS, vrxperience_msgs::msg::GPS> receiver("recv_gps", &convert);
+  GPSReceiver receiver("recv_gps", IndyDS_GPS_desc, &convert);
   receiver.run();
 }

@@ -16,12 +16,13 @@
 #define SIM_DATA_RECEIVER_HPP
 
 #include <rclcpp/rclcpp.hpp>
-
-#include <dds/sub/ddssub.hpp>
-#include <dds/core/ddscore.hpp>
+#include <dds/dds.h>
 
 #define IN
 #define OUT &
+
+// An array of one message (aka sample in DDS terms) will be used
+#define MAX_SAMPLES 1
 
 namespace vrxperience_bridge
 {
@@ -32,8 +33,8 @@ class SimDataReceiver : public rclcpp::Node
 public:
   typedef void (*sim2ros)(SimMsg IN, RosMsg OUT);
 
-  SimDataReceiver(std::string ros_node_name, sim2ros convert)
-    : Node(ros_node_name), convert_(convert)
+  SimDataReceiver(std::string ros_node_name, dds_topic_descriptor_t dds_topic_desc, sim2ros convert)
+    : Node(ros_node_name), dds_topic_desc_(dds_topic_desc), convert_(convert)
   {
     // Declare and read ROS parameters
     ros_topic_  = declare_parameter("ros_topic", "");
@@ -44,43 +45,48 @@ public:
   void run()
   {
     // Create DDS Domain Participant with appropriate Topic and Data Reader
-    dds::domain::DomainParticipant participant(dds_domain_);
-    dds::topic::Topic<SimMsg> topic(participant, dds_topic_);
-    dds::sub::DataReader<SimMsg> reader(dds::sub::Subscriber(participant), topic);
+    auto participant = dds_create_participant(dds_domain_, nullptr, nullptr);
+    auto topic = dds_create_topic(participant, &dds_topic_desc_, dds_topic_.c_str(), nullptr, nullptr);
+    auto reader = dds_create_reader(participant, topic, nullptr, nullptr);
 
     // Create ROS Publisher
     ros_publisher_ = create_publisher<RosMsg>(ros_topic_, 1);
 
-    // Define a Read Condition and callback for received samples
-    dds::sub::cond::ReadCondition read_condition(
-        reader,
-        dds::sub::status::DataState::any(),
-        [&reader, this]()
+    void *samples[MAX_SAMPLES];
+    dds_sample_info_t infos[MAX_SAMPLES];
+
+    // Allocate memory to hold samples
+    for (int i = 0; i < MAX_SAMPLES; i++)
     {
-        dds::sub::LoanedSamples<SimMsg> samples = reader.take();
-        for (auto sample : samples) {
-            if (sample.info().valid()) {
-                RosMsg rosMsg;
-                (*convert_)(sample, rosMsg);
-                ros_publisher_->publish(rosMsg);
-            }
+      samples[i] = dds_alloc(sizeof(SimMsg));
+    }
+
+    while (rclcpp::ok())
+    {
+      auto ret = dds_read(reader, samples, infos, MAX_SAMPLES, MAX_SAMPLES);
+
+      // Iterate through the samples and publish to ROS 2 if there are any new
+      for (int i = 0; i < ret; i++)
+      {
+        if (infos[i].sample_state == DDS_SST_NOT_READ && infos[i].valid_data)
+        {
+          RosMsg rosMsg;
+          (*convert_)(*((SimMsg*) samples[0]), rosMsg);
+          ros_publisher_->publish(rosMsg);
         }
-    });
-
-    // Create a WaitSet and attach the ReadCondition
-    dds::core::cond::WaitSet waitset;
-    waitset += read_condition;
-
-    while (rclcpp::ok()) waitset.dispatch(dds::core::Duration(1));
+      }
+    }
   }
 
 private:
-  typename rclcpp::Publisher<RosMsg>::SharedPtr ros_publisher_;
+  dds_topic_descriptor_t dds_topic_desc_;
   sim2ros convert_;
 
   std::string ros_topic_;
   std::string dds_topic_;
   int dds_domain_;
+
+  typename rclcpp::Publisher<RosMsg>::SharedPtr ros_publisher_;
 }; // class SimDataReceiver
 
 } // namespace vrxperience_bridge

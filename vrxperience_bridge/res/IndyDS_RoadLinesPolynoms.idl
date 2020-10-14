@@ -12,23 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "vrxperience_bridge/sim_data_receiver.hpp"
-#include "std_msgs/msg/byte_multi_array.hpp"
-#include "DDS_Octets.h"
+module IndyDS {
 
-using vrxperience_bridge::SimDataReceiver;
-typedef SimDataReceiver<DDS_Octets, std_msgs::msg::ByteMultiArray> DDSDoneReceiver;
+  struct RoadLinePolynom {
+        short lineId;
+        double c0;
+        double c1;
+        double c2;
+        double c3;
+        double curvatureRadius;
+        double estimatedCurvatureRadius;
+  };
 
-void convert(DDS_Octets IN simMsg, std_msgs::msg::ByteMultiArray OUT rosMsg)
-{
-  for (uint32_t i = 0; i < simMsg.value._length; i++)
-  {
-    rosMsg.data.push_back(simMsg.value._buffer[i]);
-  }
-}
-int main(int argc, char *argv[])
-{
-  rclcpp::init(argc, argv);
-  DDSDoneReceiver receiver("recv_dds_done", DDS_Octets_desc, &convert);
-  receiver.run();
-}
+  struct RoadLinesPolynoms {
+        short egoVhlId;
+        long globalId;
+        octet isNoisy;
+        short referenceFrame;
+        sequence<IndyDS::RoadLinePolynom> roadLinesPolynomsArray;
+        double timeOfUpdate;
+  };
+
+  #pragma keylist RoadLinesPolynoms
+};

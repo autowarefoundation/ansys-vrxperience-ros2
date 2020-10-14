@@ -16,9 +16,7 @@
 #define SIM_DATA_SENDER_HPP
 
 #include <rclcpp/rclcpp.hpp>
-
-#include <dds/pub/ddspub.hpp>
-#include <dds/core/ddscore.hpp>
+#include <dds/dds.h>
 
 #define IN
 #define OUT &
@@ -32,8 +30,8 @@ class SimDataSender : public rclcpp::Node
 public:
   typedef void (*ros2sim)(RosMsg IN, SimMsg OUT);
 
-  SimDataSender(std::string ros_node_name, ros2sim convert)
-    : Node(ros_node_name), convert_(convert)
+  SimDataSender(std::string ros_node_name, dds_topic_descriptor_t dds_topic_desc, ros2sim convert)
+    : Node(ros_node_name), dds_topic_desc_(dds_topic_desc), convert_(convert)
   {
     // Declare  and read ROS parameters
     ros_topic_  = declare_parameter("ros_topic", "");
@@ -41,10 +39,9 @@ public:
     dds_domain_ = declare_parameter("dds_domain", 0);
 
     // Create DDS Domain Participant with appropriate Topic and Data Writer
-    dds::domain::DomainParticipant participant(dds_domain_);
-    dds::topic::Topic<SimMsg> topic(participant, dds_topic_);
-    sim_writer_ = std::make_shared<dds::pub::DataWriter<SimMsg>>(
-      rti::pub::implicit_publisher(participant), topic);
+    auto participant = dds_create_participant(dds_domain_, nullptr, nullptr);
+    auto topic = dds_create_topic(participant, &dds_topic_desc_, dds_topic_.c_str(), nullptr, nullptr);
+    sim_writer_ = dds_create_writer(participant, topic, nullptr, nullptr);
 
     // Create ROS Subscription
     std::function<void(const typename RosMsg::SharedPtr rosMsg)> callback = std::bind(&SimDataSender<RosMsg, SimMsg>::topicCallback, this, std::placeholders::_1);
@@ -56,16 +53,18 @@ private:
   {
     SimMsg simMsg;
     (*convert_)(*rosMsg, simMsg);
-    sim_writer_->write(simMsg);
+    dds_write(sim_writer_, &simMsg);
   }
 
-  typename rclcpp::Subscription<RosMsg>::SharedPtr ros_subscription_;
-  std::shared_ptr<dds::pub::DataWriter<SimMsg>> sim_writer_;
+  dds_topic_descriptor_t dds_topic_desc_;
   ros2sim convert_;
 
   std::string ros_topic_;
   std::string dds_topic_;
   int dds_domain_;
+
+  typename rclcpp::Subscription<RosMsg>::SharedPtr ros_subscription_;
+  dds_entity_t sim_writer_;
 }; // class SimDataSender
 
 } // namespace vrxperience_bridge
