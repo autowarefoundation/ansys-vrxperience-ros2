@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 {
   rclcpp::init(argc, argv);
   auto sender = std::make_shared<CabToSteeringCorrectiveSender>("send_cab_to_steering_corrective",
-                                                                IndyDS_CabToModelCorrective_desc,
+                                                                IndyDS_CabToSteeringCorrective_desc,
                                                                 &convert);
 
   rclcpp::spin(sender);
