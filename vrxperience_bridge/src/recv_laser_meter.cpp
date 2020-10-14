@@ -32,7 +32,7 @@ void convert(IndyDS_LaserMeter IN simMsg, vrxperience_msgs::msg::LaserMeter OUT 
   rosMsg.sensor_id = simMsg.sensorId;
   rosMsg.nearest_point = simMsg.nearestPoint;
 
-  for (int i = 0; i < simMsg.resultArray._length; i++)
+  for (uint32_t i = 0; i < simMsg.resultArray._length; i++)
   {
     auto simLaserMeterPointMsg = simMsg.resultArray._buffer[i];
     vrxperience_msgs::msg::LaserMeterPoint rosLaserMeterPointMsg;

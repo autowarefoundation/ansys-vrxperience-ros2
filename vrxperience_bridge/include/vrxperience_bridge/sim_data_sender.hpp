@@ -56,14 +56,15 @@ private:
     dds_write(sim_writer_, &simMsg);
   }
 
-  typename rclcpp::Subscription<RosMsg>::SharedPtr ros_subscription_;
-  dds_entity_t sim_writer_;
-  ros2sim convert_;
   dds_topic_descriptor_t dds_topic_desc_;
+  ros2sim convert_;
 
   std::string ros_topic_;
   std::string dds_topic_;
   int dds_domain_;
+
+  typename rclcpp::Subscription<RosMsg>::SharedPtr ros_subscription_;
+  dds_entity_t sim_writer_;
 }; // class SimDataSender
 
 } // namespace vrxperience_bridge

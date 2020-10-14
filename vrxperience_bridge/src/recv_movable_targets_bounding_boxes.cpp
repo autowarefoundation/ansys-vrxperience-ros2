@@ -36,7 +36,7 @@ void convert(IndyDS_SensorMovableTargetsBoundingBoxes IN simMsg, vrxperience_msg
   rosMsg.global_id = simMsg.globalId;
   rosMsg.ego_vehicle_id = simMsg.vhlId;
 
-  for (int i = 0; i < simMsg.boundingBoxesArray._length; i++)
+  for (uint32_t i = 0; i < simMsg.boundingBoxesArray._length; i++)
   {
     auto simBoundingBoxMsg = simMsg.boundingBoxesArray._buffer[i];
     vrxperience_msgs::msg::MovableTargetBoundingBox rosBoundingBoxMsg;

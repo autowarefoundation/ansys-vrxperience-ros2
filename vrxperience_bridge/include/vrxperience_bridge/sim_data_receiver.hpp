@@ -79,13 +79,14 @@ public:
   }
 
 private:
-  typename rclcpp::Publisher<RosMsg>::SharedPtr ros_publisher_;
-  sim2ros convert_;
   dds_topic_descriptor_t dds_topic_desc_;
+  sim2ros convert_;
 
   std::string ros_topic_;
   std::string dds_topic_;
   int dds_domain_;
+
+  typename rclcpp::Publisher<RosMsg>::SharedPtr ros_publisher_;
 }; // class SimDataReceiver
 
 } // namespace vrxperience_bridge

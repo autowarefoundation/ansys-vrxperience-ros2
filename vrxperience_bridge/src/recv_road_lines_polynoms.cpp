@@ -49,7 +49,7 @@ void convert(IndyDS_RoadLinesPolynoms IN simMsg, vrxperience_msgs::msg::RoadLine
   rosMsg.ego_vehicle_id = simMsg.egoVhlId;
   rosMsg.is_noisy = simMsg.isNoisy;
 
-  for (int i = 0; i < simMsg.roadLinesPolynomsArray._length; i++)
+  for (uint32_t i = 0; i < simMsg.roadLinesPolynomsArray._length; i++)
   {
     auto simPolynomMsg = simMsg.roadLinesPolynomsArray._buffer[i];
     vrxperience_msgs::msg::RoadLinePolynom rosPolynomMsg;

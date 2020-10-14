@@ -21,7 +21,7 @@ typedef SimDataReceiver<DDS_Octets, std_msgs::msg::ByteMultiArray> DDSDoneReceiv
 
 void convert(DDS_Octets IN simMsg, std_msgs::msg::ByteMultiArray OUT rosMsg)
 {
-  for (int i = 0; i < simMsg.value._length; i++)
+  for (uint32_t i = 0; i < simMsg.value._length; i++)
   {
     rosMsg.data.push_back(simMsg.value._buffer[i]);
   }

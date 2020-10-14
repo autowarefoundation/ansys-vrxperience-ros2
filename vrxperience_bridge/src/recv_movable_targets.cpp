@@ -38,7 +38,7 @@ void convert(IndyDS_SensorMovableTargets IN simMsg, vrxperience_msgs::msg::Movab
   rosMsg.ego_vehicle_id = simMsg.egoVhlId;
   rosMsg.nearest_target = simMsg.nearestTarget;
 
-  for (int i = 0; i < simMsg.targetsArray._length; i++)
+  for (uint32_t i = 0; i < simMsg.targetsArray._length; i++)
   {
     auto simMovableTargetMsg = simMsg.targetsArray._buffer[i];
     vrxperience_msgs::msg::MovableTarget rosMovableTargetMsg;
