@@ -8,12 +8,14 @@
   <license>Apache 2.0</license>
   <url type="repository">https://github.com/autowarefoundation/ansys-vrxperience-ros2</url>
   <author email="gotlib.adam+dev@gmail.com">Adam Gotlib</author>
+  <author email="josh.whitley@autoware.org">Josh Whitley</author>
   <author>Trent Weiss</author>
 
-  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_auto</buildtool_depend>
 
   <depend>launch_xml</depend>
   <depend>rclcpp</depend>
+  <depend>rclcpp_components</depend>
   <depend>tf2</depend>
   <depend>vrxperience_msgs</depend>
   <depend>cyclonedds</depend>
