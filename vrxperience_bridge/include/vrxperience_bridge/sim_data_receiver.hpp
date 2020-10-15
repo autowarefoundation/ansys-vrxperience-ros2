@@ -76,6 +76,10 @@ public:
         }
       }
     }
+
+    for (int i = 0; i < MAX_SAMPLES; i++) {
+      dds_free(samples[i]);
+    }
   }
 
 private:
