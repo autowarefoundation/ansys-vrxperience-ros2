@@ -40,8 +40,8 @@ public:
   }
 
   void convert(
-    IndyDS_SensorMovableTargetsBoundingBoxes IN simMsg,
-    vrxperience_msgs::msg::MovableTargetsBoundingBoxes OUT rosMsg)
+    const IndyDS_SensorMovableTargetsBoundingBoxes & simMsg,
+    vrxperience_msgs::msg::MovableTargetsBoundingBoxes & rosMsg)
   {
     rosMsg.header.stamp.sec = static_cast<int>(simMsg.timeOfUpdate);
     rosMsg.header.stamp.nanosec =

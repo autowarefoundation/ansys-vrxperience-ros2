@@ -35,7 +35,7 @@ public:
   {
   }
 
-  void convert(std_msgs::msg::ByteMultiArray IN rosMsg, DDS_Octets OUT simMsg)
+  void convert(const std_msgs::msg::ByteMultiArray & rosMsg, DDS_Octets & simMsg)
   {
     UNUSED(rosMsg);
 

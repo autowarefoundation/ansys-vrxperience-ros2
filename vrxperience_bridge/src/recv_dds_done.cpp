@@ -32,7 +32,7 @@ public:
   {
   }
 
-  void convert(DDS_Octets IN simMsg, std_msgs::msg::ByteMultiArray OUT rosMsg)
+  void convert(const DDS_Octets & simMsg, std_msgs::msg::ByteMultiArray & rosMsg)
   {
     for (uint32_t i = 0; i < simMsg.value._length; i++) {
       rosMsg.data.push_back(simMsg.value._buffer[i]);

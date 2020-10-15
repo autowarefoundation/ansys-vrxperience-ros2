@@ -20,9 +20,6 @@
 
 #include <string>
 
-#define IN
-#define OUT &
-
 namespace vrxperience_bridge
 {
 
@@ -33,7 +30,7 @@ template<class RosMsg, class SimMsg>
 class SimDataSender : public rclcpp::Node
 {
 public:
-  using ConvertFunc = std::function<void (RosMsg IN, SimMsg OUT)>;
+  using ConvertFunc = std::function<void (const RosMsg &, SimMsg &)>;
 
   SimDataSender(
     const std::string & ros_node_name,

@@ -35,8 +35,8 @@ public:
   }
 
   void convert(
-    vrxperience_msgs::msg::CabToModelCorrective IN rosMsg,
-    IndyDS_CabToModelCorrective OUT simMsg)
+    const vrxperience_msgs::msg::CabToModelCorrective & rosMsg,
+    IndyDS_CabToModelCorrective & simMsg)
   {
     simMsg.TimeOfUpdate = rosMsg.header.stamp.sec + rosMsg.header.stamp.nanosec * 1e-9;
     simMsg.AcceleratorAdditive = rosMsg.accelerator_additive;

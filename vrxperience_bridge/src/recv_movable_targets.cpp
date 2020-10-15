@@ -42,8 +42,8 @@ public:
   }
 
   void convert(
-    IndyDS_SensorMovableTargets IN simMsg,
-    vrxperience_msgs::msg::MovableTargets OUT rosMsg)
+    const IndyDS_SensorMovableTargets & simMsg,
+    vrxperience_msgs::msg::MovableTargets & rosMsg)
   {
     rosMsg.header.stamp.sec = static_cast<int>(simMsg.timeOfUpdate);
     rosMsg.header.stamp.nanosec =

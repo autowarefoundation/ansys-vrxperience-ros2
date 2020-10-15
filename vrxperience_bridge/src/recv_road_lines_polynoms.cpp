@@ -40,8 +40,8 @@ public:
   }
 
   void convert(
-    IndyDS_RoadLinesPolynoms IN simMsg,
-    vrxperience_msgs::msg::RoadLinesPolynoms OUT rosMsg)
+    const IndyDS_RoadLinesPolynoms & simMsg,
+    vrxperience_msgs::msg::RoadLinesPolynoms & rosMsg)
   {
     rosMsg.header.stamp.sec = static_cast<int>(simMsg.timeOfUpdate);
     rosMsg.header.stamp.nanosec =

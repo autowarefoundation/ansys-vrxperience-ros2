@@ -21,9 +21,6 @@
 #include <chrono>
 #include <string>
 
-#define IN
-#define OUT &
-
 // An array of one message (aka sample in DDS terms) will be used
 #define MAX_SAMPLES 1
 
@@ -41,7 +38,7 @@ template<class SimMsg, class RosMsg>
 class SimDataReceiver : public rclcpp::Node
 {
 public:
-  using ConvertFunc = std::function<void (SimMsg IN, RosMsg OUT)>;
+  using ConvertFunc = std::function<void (const SimMsg &, RosMsg &)>;
 
   SimDataReceiver(
     const std::string & ros_node_name,

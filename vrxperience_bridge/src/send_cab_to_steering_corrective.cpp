@@ -35,8 +35,8 @@ public:
   }
 
   void convert(
-    vrxperience_msgs::msg::CabToSteeringCorrective IN rosMsg,
-    IndyDS_CabToSteeringCorrective OUT simMsg)
+    const vrxperience_msgs::msg::CabToSteeringCorrective & rosMsg,
+    IndyDS_CabToSteeringCorrective & simMsg)
   {
     simMsg.TimeOfUpdate = rosMsg.header.stamp.sec + rosMsg.header.stamp.nanosec * 1e-9;
     simMsg.AdditiveSteeringWheelAngle = rosMsg.additive_steering_wheel_angle;

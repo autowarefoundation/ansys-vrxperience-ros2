@@ -36,7 +36,7 @@ public:
     sensor_frame_ = declare_parameter("sensor_frame", "");
   }
 
-  void convert(IndyDS_LaserMeter IN simMsg, vrxperience_msgs::msg::LaserMeter OUT rosMsg)
+  void convert(const IndyDS_LaserMeter & simMsg, vrxperience_msgs::msg::LaserMeter & rosMsg)
   {
     rosMsg.header.stamp.sec = static_cast<int>(simMsg.lastUpdate);
     rosMsg.header.stamp.nanosec =

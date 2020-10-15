@@ -36,7 +36,7 @@ public:
   {
   }
 
-  void convert(IndyDS_VehicleOutput IN simMsg, vrxperience_msgs::msg::VehicleOutput OUT rosMsg)
+  void convert(const IndyDS_VehicleOutput & simMsg, vrxperience_msgs::msg::VehicleOutput & rosMsg)
   {
     rosMsg.header.stamp.sec = static_cast<int>(simMsg.TimeOfUpdate);
     rosMsg.header.stamp.nanosec =

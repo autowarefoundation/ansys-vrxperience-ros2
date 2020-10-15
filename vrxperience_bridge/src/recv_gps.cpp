@@ -33,7 +33,7 @@ public:
   {
   }
 
-  void convert(IndyDS_GPS IN simMsg, vrxperience_msgs::msg::GPS OUT rosMsg)
+  void convert(const IndyDS_GPS & simMsg, vrxperience_msgs::msg::GPS & rosMsg)
   {
     rosMsg.header.stamp.sec = static_cast<int>(simMsg.lastUpdate);
     rosMsg.header.stamp.nanosec =
