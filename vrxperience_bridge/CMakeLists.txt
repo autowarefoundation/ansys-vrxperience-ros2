@@ -71,52 +71,52 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 rclcpp_components_register_node(${PROJECT_NAME}
-  PLUGIN "vrxperience_bridge::RecvDdsDone"
+  PLUGIN "vrxperience_bridge::DdsDoneReceiver"
   EXECUTABLE recv_dds_done
 )
 
 rclcpp_components_register_node(${PROJECT_NAME}
-  PLUGIN "vrxperience_bridge::RecvGps"
+  PLUGIN "vrxperience_bridge::GpsReceiver"
   EXECUTABLE recv_gps
 )
 
 rclcpp_components_register_node(${PROJECT_NAME}
-  PLUGIN "vrxperience_bridge::RecvLaserMeter"
+  PLUGIN "vrxperience_bridge::LaserMeterReceiver"
   EXECUTABLE recv_laser_meter
 )
 
 rclcpp_components_register_node(${PROJECT_NAME}
-  PLUGIN "vrxperience_bridge::RecvMovableTargets"
+  PLUGIN "vrxperience_bridge::MovableTargetsReceiver"
   EXECUTABLE recv_movable_targets
 )
 
 rclcpp_components_register_node(${PROJECT_NAME}
-  PLUGIN "vrxperience_bridge::RecvMovableTargetsBoundingBoxes"
+  PLUGIN "vrxperience_bridge::MovableTargetsBoundingBoxesReceiver"
   EXECUTABLE recv_movable_targets_bounding_boxes
 )
 
 rclcpp_components_register_node(${PROJECT_NAME}
-  PLUGIN "vrxperience_bridge::RecvRoadLinesPolynoms"
+  PLUGIN "vrxperience_bridge::RoadLinesPolynomsReceiver"
   EXECUTABLE recv_road_lines_polynoms
 )
 
 rclcpp_components_register_node(${PROJECT_NAME}
-  PLUGIN "vrxperience_bridge::RecvVehicleOutput"
+  PLUGIN "vrxperience_bridge::VehicleOutputReceiver"
   EXECUTABLE recv_vehicle_output
 )
 
 rclcpp_components_register_node(${PROJECT_NAME}
-  PLUGIN "vrxperience_bridge::SendCabToModelCorrective"
+  PLUGIN "vrxperience_bridge::CabToModelCorrectiveSender"
   EXECUTABLE send_cab_to_model_corrective
 )
 
 rclcpp_components_register_node(${PROJECT_NAME}
-  PLUGIN "vrxperience_bridge::SendCabToSteeringCorrective"
+  PLUGIN "vrxperience_bridge::CabToSteeringCorrectiveSender"
   EXECUTABLE send_cab_to_steering_corrective
 )
 
 rclcpp_components_register_node(${PROJECT_NAME}
-  PLUGIN "vrxperience_bridge::SendDdsDoneReply"
+  PLUGIN "vrxperience_bridge::DdsDoneReplySender"
   EXECUTABLE send_dds_done_reply
 )
 

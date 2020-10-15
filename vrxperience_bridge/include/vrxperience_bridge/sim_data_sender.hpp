@@ -26,14 +26,24 @@
 namespace vrxperience_bridge
 {
 
+using std::placeholders::_1;
+using std::placeholders::_2;
+
 template<class RosMsg, class SimMsg>
 class SimDataSender : public rclcpp::Node
 {
 public:
-  typedef void (* ros2sim)(RosMsg IN, SimMsg OUT);
+  using ConvertFunc = std::function<void (RosMsg IN, SimMsg OUT)>;
 
-  SimDataSender(std::string ros_node_name, dds_topic_descriptor_t dds_topic_desc, ros2sim convert)
-  : Node(ros_node_name), dds_topic_desc_(dds_topic_desc), convert_(convert)
+  SimDataSender(
+    const std::string & ros_node_name,
+    const rclcpp::NodeOptions & options,
+    dds_topic_descriptor_t dds_topic_desc,
+    ConvertFunc convert
+  )
+  : Node(ros_node_name, options),
+    dds_topic_desc_(dds_topic_desc),
+    convert_(convert)
   {
     // Declare  and read ROS parameters
     ros_topic_ = declare_parameter("ros_topic", "");
@@ -57,12 +67,12 @@ private:
   void topicCallback(const typename RosMsg::SharedPtr rosMsg)
   {
     SimMsg simMsg;
-    (*convert_)(*rosMsg, simMsg);
+    convert_(*rosMsg, simMsg);
     dds_write(sim_writer_, &simMsg);
   }
 
   dds_topic_descriptor_t dds_topic_desc_;
-  ros2sim convert_;
+  ConvertFunc convert_;
 
   std::string ros_topic_;
   std::string dds_topic_;
