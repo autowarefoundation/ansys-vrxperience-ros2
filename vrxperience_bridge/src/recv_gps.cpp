@@ -21,8 +21,9 @@ typedef SimDataReceiver<IndyDS_GPS, vrxperience_msgs::msg::GPS> GPSReceiver;
 
 void convert(IndyDS_GPS IN simMsg, vrxperience_msgs::msg::GPS OUT rosMsg)
 {
-  rosMsg.header.stamp.sec = (int) simMsg.lastUpdate;
-  rosMsg.header.stamp.nanosec = ((int) (simMsg.lastUpdate * 1e9)) % ((int) 1e9);
+  rosMsg.header.stamp.sec = static_cast<int>(simMsg.lastUpdate);
+  rosMsg.header.stamp.nanosec =
+    (static_cast<int>(simMsg.lastUpdate * 1e9)) % static_cast<int>(1e9);
 
   rosMsg.global_id = simMsg.globalId;
   rosMsg.ego_vehicle_id = simMsg.vhlId;
@@ -33,7 +34,7 @@ void convert(IndyDS_GPS IN simMsg, vrxperience_msgs::msg::GPS OUT rosMsg)
   rosMsg.hdop = simMsg.hdop;
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
   GPSReceiver receiver("recv_gps", IndyDS_GPS_desc, &convert);

@@ -12,45 +12,49 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <string>
+
 #include "vrxperience_bridge/sim_data_receiver.hpp"
 #include "vrxperience_msgs/msg/road_lines_polynoms.hpp"
 #include "IndyDS_RoadLinesPolynoms.h"
 
 using vrxperience_bridge::SimDataReceiver;
-typedef SimDataReceiver<IndyDS_RoadLinesPolynoms, vrxperience_msgs::msg::RoadLinesPolynoms> RoadLinesPolynomsReceiver;
+typedef SimDataReceiver<IndyDS_RoadLinesPolynoms,
+    vrxperience_msgs::msg::RoadLinesPolynoms> RoadLinesPolynomsReceiver;
 
 const int WORLD_FRAME = 0;
 const int VEHICLE_FRAME = 1;
 const int SENSOR_FRAME = 2;
 
-std::string world_frame;
-std::string vehicle_frame;
-std::string sensor_frame;
+std::string world_frame;  // NOLINT
+std::string vehicle_frame;  // NOLINT
+std::string sensor_frame;  // NOLINT
 
-void convert(IndyDS_RoadLinesPolynoms IN simMsg, vrxperience_msgs::msg::RoadLinesPolynoms OUT rosMsg)
+void convert(
+  IndyDS_RoadLinesPolynoms IN simMsg,
+  vrxperience_msgs::msg::RoadLinesPolynoms OUT rosMsg)
 {
-  rosMsg.header.stamp.sec = (int) simMsg.timeOfUpdate;
-  rosMsg.header.stamp.nanosec = ((int) (simMsg.timeOfUpdate * 1e9)) % ((int) 1e9);
+  rosMsg.header.stamp.sec = static_cast<int>(simMsg.timeOfUpdate);
+  rosMsg.header.stamp.nanosec =
+    (static_cast<int>(simMsg.timeOfUpdate * 1e9)) % (static_cast<int>(1e9));
 
-  switch(simMsg.referenceFrame)
-  {
-  case WORLD_FRAME:
-    rosMsg.header.frame_id = world_frame;
-    break;
-  case VEHICLE_FRAME:
-    rosMsg.header.frame_id = vehicle_frame;
-    break;
-  case SENSOR_FRAME:
-    rosMsg.header.frame_id = sensor_frame;
-    break;
+  switch (simMsg.referenceFrame) {
+    case WORLD_FRAME:
+      rosMsg.header.frame_id = world_frame;
+      break;
+    case VEHICLE_FRAME:
+      rosMsg.header.frame_id = vehicle_frame;
+      break;
+    case SENSOR_FRAME:
+      rosMsg.header.frame_id = sensor_frame;
+      break;
   }
 
   rosMsg.global_id = simMsg.globalId;
   rosMsg.ego_vehicle_id = simMsg.egoVhlId;
   rosMsg.is_noisy = simMsg.isNoisy;
 
-  for (uint32_t i = 0; i < simMsg.roadLinesPolynomsArray._length; i++)
-  {
+  for (uint32_t i = 0; i < simMsg.roadLinesPolynomsArray._length; i++) {
     auto simPolynomMsg = simMsg.roadLinesPolynomsArray._buffer[i];
     vrxperience_msgs::msg::RoadLinePolynom rosPolynomMsg;
 
@@ -68,12 +72,13 @@ void convert(IndyDS_RoadLinesPolynoms IN simMsg, vrxperience_msgs::msg::RoadLine
   }
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
-  RoadLinesPolynomsReceiver receiver("recv_road_lines_polynoms", IndyDS_RoadLinesPolynoms_desc, &convert);
-  world_frame   = receiver.declare_parameter("world_frame", "world");
+  RoadLinesPolynomsReceiver receiver("recv_road_lines_polynoms", IndyDS_RoadLinesPolynoms_desc,
+    &convert);
+  world_frame = receiver.declare_parameter("world_frame", "world");
   vehicle_frame = receiver.declare_parameter("vehicle_frame", "base_link");
-  sensor_frame  = receiver.declare_parameter("sensor_frame", "");
+  sensor_frame = receiver.declare_parameter("sensor_frame", "");
   receiver.run();
 }

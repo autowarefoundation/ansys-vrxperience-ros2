@@ -14,49 +14,54 @@
 
 #include <tf2/LinearMath/Quaternion.h>
 
+#include <string>
+
 #include "vrxperience_bridge/sim_data_receiver.hpp"
 #include "vrxperience_msgs/msg/movable_targets.hpp"
 #include "IndyDS_SensorMovableTargets.h"
 
 using vrxperience_bridge::SimDataReceiver;
-typedef SimDataReceiver<IndyDS_SensorMovableTargets, vrxperience_msgs::msg::MovableTargets> MovableTargetsReceiver;
+typedef SimDataReceiver<IndyDS_SensorMovableTargets,
+    vrxperience_msgs::msg::MovableTargets> MovableTargetsReceiver;
 
 const int WORLD_FRAME = 0;
 const int VEHICLE_FRAME = 1;
 const int SENSOR_FRAME = 2;
 
-std::string world_frame;
-std::string vehicle_frame;
-std::string sensor_frame;
+std::string world_frame;  // NOLINT
+std::string vehicle_frame;  // NOLINT
+std::string sensor_frame;  // NOLINT
 
-void convert(IndyDS_SensorMovableTargets IN simMsg, vrxperience_msgs::msg::MovableTargets OUT rosMsg)
+void convert(
+  IndyDS_SensorMovableTargets IN simMsg,
+  vrxperience_msgs::msg::MovableTargets OUT rosMsg)
 {
-  rosMsg.header.stamp.sec = (int) simMsg.timeOfUpdate;
-  rosMsg.header.stamp.nanosec = ((int) (simMsg.timeOfUpdate * 1e9)) % ((int) 1e9);
+  rosMsg.header.stamp.sec = static_cast<int>(simMsg.timeOfUpdate);
+  rosMsg.header.stamp.nanosec =
+    (static_cast<int>(simMsg.timeOfUpdate * 1e9)) % (static_cast<int>(1e9));
 
   rosMsg.global_id = simMsg.globalId;
   rosMsg.ego_vehicle_id = simMsg.egoVhlId;
   rosMsg.nearest_target = simMsg.nearestTarget;
 
-  for (uint32_t i = 0; i < simMsg.targetsArray._length; i++)
-  {
+  for (uint32_t i = 0; i < simMsg.targetsArray._length; i++) {
     auto simMovableTargetMsg = simMsg.targetsArray._buffer[i];
     vrxperience_msgs::msg::MovableTarget rosMovableTargetMsg;
 
-    rosMovableTargetMsg.header.stamp.sec = (int) simMsg.timeOfUpdate;
-    rosMovableTargetMsg.header.stamp.nanosec = ((int) (simMsg.timeOfUpdate * 1e9)) % ((int) 1e9);
+    rosMovableTargetMsg.header.stamp.sec = static_cast<int>(simMsg.timeOfUpdate);
+    rosMovableTargetMsg.header.stamp.nanosec =
+      (static_cast<int>(simMsg.timeOfUpdate * 1e9)) % (static_cast<int>(1e9));
 
-    switch(simMovableTargetMsg.referenceFrame)
-    {
-    case WORLD_FRAME:
-      rosMovableTargetMsg.header.frame_id = world_frame;
-      break;
-    case VEHICLE_FRAME:
-      rosMovableTargetMsg.header.frame_id = vehicle_frame;
-      break;
-    case SENSOR_FRAME:
-      rosMovableTargetMsg.header.frame_id = sensor_frame;
-      break;
+    switch (simMovableTargetMsg.referenceFrame) {
+      case WORLD_FRAME:
+        rosMovableTargetMsg.header.frame_id = world_frame;
+        break;
+      case VEHICLE_FRAME:
+        rosMovableTargetMsg.header.frame_id = vehicle_frame;
+        break;
+      case SENSOR_FRAME:
+        rosMovableTargetMsg.header.frame_id = sensor_frame;
+        break;
     }
 
     rosMovableTargetMsg.id = simMovableTargetMsg.id;
@@ -72,9 +77,10 @@ void convert(IndyDS_SensorMovableTargets IN simMsg, vrxperience_msgs::msg::Movab
 
     // Convert Euler angles to quaternion
     tf2::Quaternion q;
-    q.setRPY(simMovableTargetMsg.posRollInChosenRef,
-             simMovableTargetMsg.posPitchInChosenRef,
-             simMovableTargetMsg.posHeadingInChosenRef);
+    q.setRPY(
+      simMovableTargetMsg.posRollInChosenRef,
+      simMovableTargetMsg.posPitchInChosenRef,
+      simMovableTargetMsg.posHeadingInChosenRef);
     rosMovableTargetMsg.pose.orientation.x = q.getX();
     rosMovableTargetMsg.pose.orientation.y = q.getY();
     rosMovableTargetMsg.pose.orientation.z = q.getZ();
@@ -112,12 +118,13 @@ void convert(IndyDS_SensorMovableTargets IN simMsg, vrxperience_msgs::msg::Movab
   }
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
-  MovableTargetsReceiver receiver("recv_movable_targets", IndyDS_SensorMovableTargets_desc, &convert);
-  world_frame   = receiver.declare_parameter("world_frame", "world");
+  MovableTargetsReceiver receiver("recv_movable_targets", IndyDS_SensorMovableTargets_desc,
+    &convert);
+  world_frame = receiver.declare_parameter("world_frame", "world");
   vehicle_frame = receiver.declare_parameter("vehicle_frame", "base_link");
-  sensor_frame  = receiver.declare_parameter("sensor_frame", "");
+  sensor_frame = receiver.declare_parameter("sensor_frame", "");
   receiver.run();
 }
