@@ -71,7 +71,7 @@ public:
       for (int i = 0; i < ret; i++) {
         if (infos[i].sample_state == DDS_SST_NOT_READ && infos[i].valid_data) {
           RosMsg rosMsg;
-          (*convert_)(*(reinterpret_cast<SimMsg *>(samples[0])), rosMsg);
+          (*convert_)(*(reinterpret_cast<SimMsg *>(samples[i])), rosMsg);
           ros_publisher_->publish(rosMsg);
         }
       }
