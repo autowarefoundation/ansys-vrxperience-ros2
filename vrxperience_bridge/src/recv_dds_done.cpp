@@ -16,18 +16,31 @@
 #include "std_msgs/msg/byte_multi_array.hpp"
 #include "DDS_Octets.h"
 
-using vrxperience_bridge::SimDataReceiver;
-typedef SimDataReceiver<DDS_Octets, std_msgs::msg::ByteMultiArray> DDSDoneReceiver;
+namespace vrxperience_bridge
+{
 
-void convert(DDS_Octets IN simMsg, std_msgs::msg::ByteMultiArray OUT rosMsg)
+class DdsDoneReceiver
+  : public SimDataReceiver<DDS_Octets, std_msgs::msg::ByteMultiArray>
 {
-  for (uint32_t i = 0; i < simMsg.value._length; i++) {
-    rosMsg.data.push_back(simMsg.value._buffer[i]);
+public:
+  explicit DdsDoneReceiver(const rclcpp::NodeOptions & options)
+  : SimDataReceiver(
+      "recv_dds_done",
+      options,
+      DDS_Octets_desc,
+      std::bind(&DdsDoneReceiver::convert, this, _1, _2))
+  {
   }
-}
-int main(int argc, char * argv[])
-{
-  rclcpp::init(argc, argv);
-  DDSDoneReceiver receiver("recv_dds_done", DDS_Octets_desc, &convert);
-  receiver.run();
-}
+
+  void convert(const DDS_Octets & simMsg, std_msgs::msg::ByteMultiArray & rosMsg)
+  {
+    for (uint32_t i = 0; i < simMsg.value._length; i++) {
+      rosMsg.data.push_back(simMsg.value._buffer[i]);
+    }
+  }
+};  // class DdsDoneReceiver
+
+}  // namespace vrxperience_bridge
+
+#include <rclcpp_components/register_node_macro.hpp>  // NOLINT
+RCLCPP_COMPONENTS_REGISTER_NODE(vrxperience_bridge::DdsDoneReceiver)

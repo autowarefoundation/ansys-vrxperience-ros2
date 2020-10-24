@@ -30,10 +30,9 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 # find dependencies
-find_package(ament_cmake REQUIRED)
-find_package(rclcpp REQUIRED)
-find_package(vrxperience_msgs REQUIRED)
+find_package(ament_cmake_auto REQUIRED)
 find_package(CycloneDDS REQUIRED COMPONENTS idlc)
+ament_auto_find_build_dependencies()
 
 # generate code to handle custom DDS data types
 idlc_generate(IndyDS_RoadLinesPolynoms_lib "res/IndyDS_RoadLinesPolynoms.idl")
@@ -46,92 +45,79 @@ idlc_generate(IndyDS_CabToModelCorrective_lib "res/IndyDS_CabToModelCorrective.i
 idlc_generate(IndyDS_CabToSteeringCorrective_lib "res/IndyDS_CabToSteeringCorrective.idl")
 idlc_generate(DDS_Octets_lib "res/DDS_Octets.idl")
 
-include_directories(include)
-link_libraries(CycloneDDS::ddsc)
-
-add_executable(recv_road_lines_polynoms src/recv_road_lines_polynoms.cpp)
-ament_target_dependencies(recv_road_lines_polynoms rclcpp vrxperience_msgs)
-target_link_libraries(recv_road_lines_polynoms IndyDS_RoadLinesPolynoms_lib)
-install(
-  TARGETS recv_road_lines_polynoms
-  DESTINATION lib/${PROJECT_NAME}
+ament_auto_add_library(${PROJECT_NAME} SHARED
+  src/recv_dds_done.cpp
+  src/recv_gps.cpp
+  src/recv_laser_meter.cpp
+  src/recv_movable_targets.cpp
+  src/recv_movable_targets_bounding_boxes.cpp
+  src/recv_road_lines_polynoms.cpp
+  src/recv_vehicle_output.cpp
+  src/send_cab_to_model_corrective.cpp
+  src/send_cab_to_steering_corrective.cpp
+  src/send_dds_done_reply.cpp
+)
+target_link_libraries(${PROJECT_NAME}
+  CycloneDDS::ddsc
+  DDS_Octets_lib
+  IndyDS_CabToModelCorrective_lib
+  IndyDS_CabToSteeringCorrective_lib
+  IndyDS_GPS_lib
+  IndyDS_LaserMeter_lib
+  IndyDS_RoadLinesPolynoms_lib
+  IndyDS_SensorMovableTargetsBoundingBoxes_lib
+  IndyDS_SensorMovableTargets_lib
+  IndyDS_VehicleOutput_lib
 )
 
-add_executable(recv_movable_targets_bounding_boxes src/recv_movable_targets_bounding_boxes.cpp)
-ament_target_dependencies(recv_movable_targets_bounding_boxes rclcpp vrxperience_msgs)
-target_link_libraries(recv_movable_targets_bounding_boxes IndyDS_SensorMovableTargetsBoundingBoxes_lib)
-install(
-  TARGETS recv_movable_targets_bounding_boxes
-  DESTINATION lib/${PROJECT_NAME}
+rclcpp_components_register_node(${PROJECT_NAME}
+  PLUGIN "vrxperience_bridge::DdsDoneReceiver"
+  EXECUTABLE recv_dds_done
 )
 
-add_executable(recv_gps src/recv_gps.cpp)
-ament_target_dependencies(recv_gps rclcpp vrxperience_msgs)
-target_link_libraries(recv_gps IndyDS_GPS_lib)
-install(
-  TARGETS recv_gps
-  DESTINATION lib/${PROJECT_NAME}
+rclcpp_components_register_node(${PROJECT_NAME}
+  PLUGIN "vrxperience_bridge::GpsReceiver"
+  EXECUTABLE recv_gps
 )
 
-add_executable(recv_laser_meter src/recv_laser_meter.cpp)
-ament_target_dependencies(recv_laser_meter rclcpp vrxperience_msgs)
-target_link_libraries(recv_laser_meter IndyDS_LaserMeter_lib)
-install(
-  TARGETS recv_laser_meter
-  DESTINATION lib/${PROJECT_NAME}
+rclcpp_components_register_node(${PROJECT_NAME}
+  PLUGIN "vrxperience_bridge::LaserMeterReceiver"
+  EXECUTABLE recv_laser_meter
 )
 
-add_executable(recv_movable_targets src/recv_movable_targets.cpp)
-ament_target_dependencies(recv_movable_targets rclcpp vrxperience_msgs)
-target_link_libraries(recv_movable_targets IndyDS_SensorMovableTargets_lib)
-install(
-  TARGETS recv_movable_targets
-  DESTINATION lib/${PROJECT_NAME}
+rclcpp_components_register_node(${PROJECT_NAME}
+  PLUGIN "vrxperience_bridge::MovableTargetsReceiver"
+  EXECUTABLE recv_movable_targets
 )
 
-add_executable(recv_vehicle_output src/recv_vehicle_output.cpp)
-ament_target_dependencies(recv_vehicle_output rclcpp vrxperience_msgs)
-target_link_libraries(recv_vehicle_output IndyDS_VehicleOutput_lib)
-install(
-  TARGETS recv_vehicle_output
-  DESTINATION lib/${PROJECT_NAME}
+rclcpp_components_register_node(${PROJECT_NAME}
+  PLUGIN "vrxperience_bridge::MovableTargetsBoundingBoxesReceiver"
+  EXECUTABLE recv_movable_targets_bounding_boxes
 )
 
-add_executable(send_cab_to_model_corrective src/send_cab_to_model_corrective.cpp)
-ament_target_dependencies(send_cab_to_model_corrective rclcpp vrxperience_msgs)
-target_link_libraries(send_cab_to_model_corrective IndyDS_CabToModelCorrective_lib)
-install(
-  TARGETS send_cab_to_model_corrective
-  DESTINATION lib/${PROJECT_NAME}
+rclcpp_components_register_node(${PROJECT_NAME}
+  PLUGIN "vrxperience_bridge::RoadLinesPolynomsReceiver"
+  EXECUTABLE recv_road_lines_polynoms
 )
 
-add_executable(send_cab_to_steering_corrective src/send_cab_to_steering_corrective.cpp)
-ament_target_dependencies(send_cab_to_steering_corrective rclcpp vrxperience_msgs)
-target_link_libraries(send_cab_to_steering_corrective IndyDS_CabToSteeringCorrective_lib)
-install(
-  TARGETS send_cab_to_steering_corrective
-  DESTINATION lib/${PROJECT_NAME}
+rclcpp_components_register_node(${PROJECT_NAME}
+  PLUGIN "vrxperience_bridge::VehicleOutputReceiver"
+  EXECUTABLE recv_vehicle_output
 )
 
-add_executable(recv_dds_done src/recv_dds_done.cpp)
-ament_target_dependencies(recv_dds_done rclcpp vrxperience_msgs)
-target_link_libraries(recv_dds_done DDS_Octets_lib)
-install(
-  TARGETS recv_dds_done
-  DESTINATION lib/${PROJECT_NAME}
+rclcpp_components_register_node(${PROJECT_NAME}
+  PLUGIN "vrxperience_bridge::CabToModelCorrectiveSender"
+  EXECUTABLE send_cab_to_model_corrective
 )
 
-add_executable(send_dds_done_reply src/send_dds_done_reply.cpp)
-ament_target_dependencies(send_dds_done_reply rclcpp vrxperience_msgs)
-target_link_libraries(send_dds_done_reply DDS_Octets_lib)
-install(
-  TARGETS send_dds_done_reply
-  DESTINATION lib/${PROJECT_NAME}
+rclcpp_components_register_node(${PROJECT_NAME}
+  PLUGIN "vrxperience_bridge::CabToSteeringCorrectiveSender"
+  EXECUTABLE send_cab_to_steering_corrective
 )
 
-install(
-  DIRECTORY launch
-  DESTINATION share/${PROJECT_NAME}/
+rclcpp_components_register_node(${PROJECT_NAME}
+  PLUGIN "vrxperience_bridge::DdsDoneReplySender"
+  EXECUTABLE send_dds_done_reply
 )
 
 if(BUILD_TESTING)
@@ -140,4 +126,7 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-ament_package()
+ament_auto_package(
+  INSTALL_TO_SHARE
+    launch
+)

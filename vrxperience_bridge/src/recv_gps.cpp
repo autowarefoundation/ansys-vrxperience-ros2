@@ -16,27 +16,40 @@
 #include "vrxperience_msgs/msg/gps.hpp"
 #include "IndyDS_GPS.h"
 
-using vrxperience_bridge::SimDataReceiver;
-typedef SimDataReceiver<IndyDS_GPS, vrxperience_msgs::msg::GPS> GPSReceiver;
-
-void convert(IndyDS_GPS IN simMsg, vrxperience_msgs::msg::GPS OUT rosMsg)
+namespace vrxperience_bridge
 {
-  rosMsg.header.stamp.sec = static_cast<int>(simMsg.lastUpdate);
-  rosMsg.header.stamp.nanosec =
-    (static_cast<int>(simMsg.lastUpdate * 1e9)) % static_cast<int>(1e9);
 
-  rosMsg.global_id = simMsg.globalId;
-  rosMsg.ego_vehicle_id = simMsg.vhlId;
-  rosMsg.sensor_id = simMsg.sensorId;
-  rosMsg.latitude = simMsg.latitude;
-  rosMsg.longitude = simMsg.longitude;
-  rosMsg.satellites = simMsg.satellites;
-  rosMsg.hdop = simMsg.hdop;
-}
-
-int main(int argc, char * argv[])
+class GpsReceiver
+  : public SimDataReceiver<IndyDS_GPS, vrxperience_msgs::msg::GPS>
 {
-  rclcpp::init(argc, argv);
-  GPSReceiver receiver("recv_gps", IndyDS_GPS_desc, &convert);
-  receiver.run();
-}
+public:
+  explicit GpsReceiver(const rclcpp::NodeOptions & options)
+  : SimDataReceiver(
+      "recv_gps",
+      options,
+      IndyDS_GPS_desc,
+      std::bind(&GpsReceiver::convert, this, _1, _2)
+  )
+  {
+  }
+
+  void convert(const IndyDS_GPS & simMsg, vrxperience_msgs::msg::GPS & rosMsg)
+  {
+    rosMsg.header.stamp.sec = static_cast<int>(simMsg.lastUpdate);
+    rosMsg.header.stamp.nanosec =
+      (static_cast<int>(simMsg.lastUpdate * 1e9)) % static_cast<int>(1e9);
+
+    rosMsg.global_id = simMsg.globalId;
+    rosMsg.ego_vehicle_id = simMsg.vhlId;
+    rosMsg.sensor_id = simMsg.sensorId;
+    rosMsg.latitude = simMsg.latitude;
+    rosMsg.longitude = simMsg.longitude;
+    rosMsg.satellites = simMsg.satellites;
+    rosMsg.hdop = simMsg.hdop;
+  }
+};  // class GpsReceiver
+
+}  // namespace vrxperience_bridge
+
+#include <rclcpp_components/register_node_macro.hpp>  // NOLINT
+RCLCPP_COMPONENTS_REGISTER_NODE(vrxperience_bridge::GpsReceiver)

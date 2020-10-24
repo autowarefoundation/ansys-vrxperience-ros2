@@ -18,10 +18,8 @@
 #include <rclcpp/rclcpp.hpp>
 #include <dds/dds.h>
 
+#include <chrono>
 #include <string>
-
-#define IN
-#define OUT &
 
 // An array of one message (aka sample in DDS terms) will be used
 #define MAX_SAMPLES 1
@@ -29,51 +27,92 @@
 namespace vrxperience_bridge
 {
 
+static constexpr int WORLD_FRAME = 0;
+static constexpr int VEHICLE_FRAME = 1;
+static constexpr int SENSOR_FRAME = 2;
+
+using std::placeholders::_1;
+using std::placeholders::_2;
+
 template<class SimMsg, class RosMsg>
 class SimDataReceiver : public rclcpp::Node
 {
 public:
-  typedef void (* sim2ros)(SimMsg IN, RosMsg OUT);
+  using ConvertFunc = std::function<void (const SimMsg &, RosMsg &)>;
 
-  SimDataReceiver(std::string ros_node_name, dds_topic_descriptor_t dds_topic_desc, sim2ros convert)
-  : Node(ros_node_name), dds_topic_desc_(dds_topic_desc), convert_(convert)
+  SimDataReceiver(
+    const std::string & ros_node_name,
+    const rclcpp::NodeOptions & options,
+    dds_topic_descriptor_t dds_topic_desc,
+    ConvertFunc convert
+  )
+  : Node(ros_node_name, options),
+    dds_topic_desc_(dds_topic_desc),
+    convert_(convert)
   {
     // Declare and read ROS parameters
     ros_topic_ = declare_parameter("ros_topic", "");
     dds_topic_ = declare_parameter("dds_topic", "");
     dds_domain_ = declare_parameter("dds_domain", 0);
-  }
 
-  void run()
-  {
     // Create DDS Domain Participant with appropriate Topic and Data Reader
-    auto participant = dds_create_participant(dds_domain_, nullptr, nullptr);
-    auto topic = dds_create_topic(
-      participant, &dds_topic_desc_,
+    participant_ = dds_create_participant(dds_domain_, nullptr, nullptr);
+
+    if (participant_ < 0) {
+      throw std::runtime_error{"Failed to create DDS participant."};
+    }
+
+    topic_ = dds_create_topic(
+      participant_, &dds_topic_desc_,
       dds_topic_.c_str(), nullptr, nullptr);
-    auto reader = dds_create_reader(participant, topic, nullptr, nullptr);
+
+    if (topic_ < 0) {
+      throw std::runtime_error{"Failed to create DDS topic."};
+    }
+
+    reader_ = dds_create_reader(participant_, topic_, nullptr, nullptr);
+
+    if (reader_ < 0) {
+      throw std::runtime_error{"Failed to create DDS reader."};
+    }
 
     // Create ROS Publisher
     ros_publisher_ = create_publisher<RosMsg>(ros_topic_, 1);
-
-    void * samples[MAX_SAMPLES];
-    dds_sample_info_t infos[MAX_SAMPLES];
 
     // Allocate memory to hold samples
     for (int i = 0; i < MAX_SAMPLES; i++) {
       samples[i] = dds_alloc(sizeof(SimMsg));
     }
 
-    while (rclcpp::ok()) {
-      auto ret = dds_read(reader, samples, infos, MAX_SAMPLES, MAX_SAMPLES);
+    timer_ = create_wall_timer(
+      std::chrono::milliseconds(10),
+      std::bind(&SimDataReceiver::read, this)
+    );
+  }
 
-      // Iterate through the samples and publish to ROS 2 if there are any new
-      for (int i = 0; i < ret; i++) {
-        if (infos[i].sample_state == DDS_SST_NOT_READ && infos[i].valid_data) {
-          RosMsg rosMsg;
-          (*convert_)(*(reinterpret_cast<SimMsg *>(samples[i])), rosMsg);
-          ros_publisher_->publish(rosMsg);
-        }
+  ~SimDataReceiver()
+  {
+    // Free allocated memory
+    for (int i = 0; i < MAX_SAMPLES; i++) {
+      dds_free(samples[i]);
+    }
+  }
+
+  void read()
+  {
+    auto ret = dds_read(reader_, samples, infos, MAX_SAMPLES, MAX_SAMPLES);
+
+    if (ret < 0) {
+      RCLCPP_ERROR(get_logger(), "Failed to read from DDS layer.");
+      return;
+    }
+
+    // Iterate through the samples and publish to ROS 2 if there are any new
+    for (int i = 0; i < ret; i++) {
+      if (infos[i].sample_state == DDS_SST_NOT_READ && infos[i].valid_data) {
+        RosMsg rosMsg;
+        convert_(*(reinterpret_cast<SimMsg *>(samples[i])), rosMsg);
+        ros_publisher_->publish(rosMsg);
       }
     }
 
@@ -83,8 +122,14 @@ public:
   }
 
 private:
+  dds_entity_t participant_;
+  dds_entity_t topic_;
+  dds_entity_t reader_;
+  void * samples[MAX_SAMPLES];
+  dds_sample_info_t infos[MAX_SAMPLES];
   dds_topic_descriptor_t dds_topic_desc_;
-  sim2ros convert_;
+  ConvertFunc convert_;
+  rclcpp::TimerBase::SharedPtr timer_;
 
   std::string ros_topic_;
   std::string dds_topic_;
