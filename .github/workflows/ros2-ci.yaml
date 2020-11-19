@@ -13,10 +13,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ros-version: [dashing, foxy]
+        ros-version: [eloquent, foxy]
         include:
-          - ros-version: dashing
-            image: ros:dashing
+          - ros-version: eloquent
+            image: ros:eloquent
           - ros-version: foxy
             image: ros:foxy
     container:
