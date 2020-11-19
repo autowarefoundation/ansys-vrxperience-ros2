@@ -2,8 +2,8 @@
 Changelog for package vrxperience_bridge
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.0 (2020-11-19)
+------------------
 * Merge pull request `#5 <https://github.com/autowarefoundation/ansys-vrxperience-ros2/issues/5>`_ from autowarefoundation/components
   ROS2 Components and Clean-up
 * Merge pull request `#4 <https://github.com/autowarefoundation/ansys-vrxperience-ros2/issues/4>`_ from autowarefoundation/fix-memory-leak
